@@ -678,7 +678,7 @@
     "m_Hidden": false,
     "m_ShaderOutputName": "Alpha",
     "m_StageCapability": 2,
-    "m_Value": 1.0,
+    "m_Value": 0.9800000190734863,
     "m_DefaultValue": 1.0,
     "m_Labels": []
 }
@@ -861,7 +861,7 @@
     "m_ObjectId": "ac7ffd250b124d809ff999b41437259d",
     "m_Version": 0,
     "m_fullscreenMode": 0,
-    "m_BlendMode": 0,
+    "m_BlendMode": 1,
     "m_SrcColorBlendMode": 0,
     "m_DstColorBlendMode": 1,
     "m_ColorBlendOperation": 0,
