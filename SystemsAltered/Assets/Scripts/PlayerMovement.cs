@@ -4,106 +4,99 @@ using UnityEngine.InputSystem;
 public class PlayerMovement : MonoBehaviour
 {
     public Transform orientation;
-    Rigidbody rb;
+    private Rigidbody rb;
 
-    [Header("Movement")]
-    public float moveSpeed;
-    public float groundDrag;
-        
+    private DrugStateData currentState;
 
+    [Header("Base")]
+    public float baseMoveSpeed = 6f;
+    public float groundDrag = 5f;
+    public float airMultiplier = 0.4f;
 
-    private float horizontalInput;
-    private float verticalInput;
-    Vector3 moveDirection;
-    private Vector2 inputDirection;
-
-    [Header("Jumping")]
-    public float jumpForce;
-    public float jumpCooldown;
-    public float airMultiplier;
-    bool jumpReady;
+    [Header("Jump")]
+    public float baseJumpForce = 5f;
+    public float jumpCooldown = 0.25f;
+    private bool jumpReady = true;
 
     [Header("Ground Check")]
     public float playerHeight;
     public LayerMask layer;
-    bool isGrounded;
+    private bool isGrounded;
 
+    private Vector2 inputDirection;
+    private Vector3 moveDirection;
 
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-        rb= GetComponent<Rigidbody>();
+        rb = GetComponent<Rigidbody>();
         rb.freezeRotation = true;
-
-        jumpReady = true;
     }
 
-    // Update is called once per frame
-    void FixedUpdate()
+    void OnEnable()
     {
-        MovePlayer();
+        DrugEventBus.OnDrugStateChanged += ApplyState;
     }
 
-    private void Update()
+    void OnDisable()
+    {
+        DrugEventBus.OnDrugStateChanged -= ApplyState;
+    }
+
+    void Update()
     {
         GroundCheck();
         SpeedControl();
     }
 
-    public void MovePlayer()
+    void FixedUpdate()
     {
+        MovePlayer();
+        ApplyGravity();
+    }
+
+    void ApplyState(DrugStateData state)
+    {
+        currentState = state;
+    }
+
+    void MovePlayer()
+    {
+        float speed = currentState != null ? currentState.moveSpeed : baseMoveSpeed;
+
         moveDirection = orientation.forward * inputDirection.y + orientation.right * inputDirection.x;
 
         if (isGrounded)
-        {
-            rb.AddForce(moveDirection.normalized * moveSpeed * 10f, ForceMode.Force);
-        }
+            rb.AddForce(moveDirection.normalized * speed * 10f, ForceMode.Force);
         else
-        {
-            rb.AddForce(moveDirection.normalized * moveSpeed * 10f * airMultiplier, ForceMode.Force);
-        }
+            rb.AddForce(moveDirection.normalized * speed * 10f * airMultiplier, ForceMode.Force);
     }
 
-    public void GroundCheck()
+    void ApplyGravity()
     {
-        //Checks for ground and applies drag if you are grounded.
+        if (currentState == null) return;
 
+        rb.AddForce(Physics.gravity * (currentState.gravityScale - 1f), ForceMode.Acceleration);
+    }
+
+    void GroundCheck()
+    {
         isGrounded = Physics.Raycast(transform.position, Vector3.down, playerHeight * 0.5f + 0.2f, layer);
-
-        if (isGrounded)
-        {
-            rb.linearDamping = groundDrag;
-        }
-        else
-        {
-            rb.linearDamping = 0;
-        }
+        rb.linearDamping = isGrounded ? groundDrag : 0;
     }
 
-    private void SpeedControl()
+    void SpeedControl()
     {
-        Vector3 flatVelocity = new Vector3(rb.linearVelocity.x, 0f, rb.linearVelocity.z);
+        float speed = currentState != null ? currentState.moveSpeed : baseMoveSpeed;
 
-        //if you go faster than your movement speed, you don't now.
-        if(flatVelocity.magnitude > moveSpeed)
+        Vector3 flatVel = new Vector3(rb.linearVelocity.x, 0f, rb.linearVelocity.z);
+
+        if (flatVel.magnitude > speed)
         {
-            Vector3 limitedVelocity = flatVelocity.normalized * moveSpeed;
-            rb.linearVelocity = new Vector3(limitedVelocity.x, rb.linearVelocity.y, limitedVelocity.z);
+            Vector3 limited = flatVel.normalized * speed;
+            rb.linearVelocity = new Vector3(limited.x, rb.linearVelocity.y, limited.z);
         }
     }
 
-    public void Jump()
-    {
-        rb.linearVelocity = new Vector3(rb.linearVelocity.x, 0f, rb.linearVelocity.z);
-
-        rb.AddForce(transform.up * jumpForce, ForceMode.Impulse);
-    }
-    public void ResetJump()
-    {
-        jumpReady = true;
-    }
-
-    //GettingInputs:
     public void OnMove(InputAction.CallbackContext ctx)
     {
         inputDirection = ctx.ReadValue<Vector2>();
@@ -111,17 +104,19 @@ public class PlayerMovement : MonoBehaviour
 
     public void OnJump(InputAction.CallbackContext ctx)
     {
-        if(ctx.action.triggered)
-        {
-            Debug.Log("jump");
-        }
+        if (!ctx.action.triggered || !jumpReady || !isGrounded) return;
 
-        if(jumpReady && isGrounded && ctx.action.triggered)
-        {
-            Jump();
-            jumpReady = false;
-            Invoke(nameof(ResetJump), jumpCooldown);
-        }
+        float jumpForce = currentState != null ? currentState.jumpForce : baseJumpForce;
+
+        rb.linearVelocity = new Vector3(rb.linearVelocity.x, 0f, rb.linearVelocity.z);
+        rb.AddForce(transform.up * jumpForce, ForceMode.Impulse);
+
+        jumpReady = false;
+        Invoke(nameof(ResetJump), jumpCooldown);
     }
 
+    void ResetJump()
+    {
+        jumpReady = true;
+    }
 }
