@@ -1,9 +1,12 @@
 using UnityEngine;
+using UnityEngine.Rendering.Universal;
+using System.Collections;
 using TMPro;
 
 /// <summary>
 /// Corrupts the HUD based on meth hallucination intensity.
-/// Displays wrong ammo count and false damage direction indicators.
+/// Displays wrong ammo count and triggers false damage flashes
+/// by briefly swapping to the damage URP renderer index.
 /// </summary>
 public class HUDController : MonoBehaviour
 {
@@ -11,24 +14,45 @@ public class HUDController : MonoBehaviour
     public TextMeshProUGUI ammoText;
     private int realAmmo;
 
-    [Header("Damage Indicator")]
-    public RectTransform damageIndicatorParent;
-    public GameObject damageIndicatorPrefab;
+    [Header("False Damage Renderer")]
+    public Camera cam;
+    [Tooltip("URP Renderer List index for the damage indicator shader")]
+    public int damageRendererIndex = 3;
+    public float falseFlashDuration = 0.15f;
+
+    private UniversalAdditionalCameraData cameraData;
+    private int activeDrugRendererIndex;
 
     private float corruptionLevel;
     private float nextFalseDamageTime;
+    private Coroutine flashRoutine;
 
-    /// <summary>
-    /// Set by HallucinationEscalation. 0 = clean HUD, 1 = fully corrupted.
-    /// </summary>
+    void Start()
+    {
+        if (cam != null)
+            cameraData = cam.GetComponent<UniversalAdditionalCameraData>();
+    }
+
+    void OnEnable()
+    {
+        DrugEventBus.OnDrugStateChanged += OnDrugStateChanged;
+    }
+
+    void OnDisable()
+    {
+        DrugEventBus.OnDrugStateChanged -= OnDrugStateChanged;
+    }
+
+    void OnDrugStateChanged(DrugStateData state)
+    {
+        activeDrugRendererIndex = state.rendererIndex;
+    }
+
     public void SetCorruptionLevel(float level)
     {
         corruptionLevel = Mathf.Clamp01(level);
     }
 
-    /// <summary>
-    /// Call from weapon system whenever real ammo changes.
-    /// </summary>
     public void SetRealAmmo(int ammo)
     {
         realAmmo = ammo;
@@ -54,7 +78,6 @@ public class HUDController : MonoBehaviour
             return;
         }
 
-        // Randomly show wrong ammo count. Higher corruption = bigger deviation.
         if (Random.value < corruptionLevel * 0.3f)
         {
             int deviation = Mathf.RoundToInt(Random.Range(-10f, 10f) * corruptionLevel);
@@ -66,7 +89,6 @@ public class HUDController : MonoBehaviour
             ammoText.text = realAmmo.ToString();
         }
 
-        // At high corruption, briefly flicker the text
         if (corruptionLevel > 0.6f && Random.value < 0.05f)
         {
             ammoText.alpha = Random.Range(0.3f, 1f);
@@ -79,19 +101,23 @@ public class HUDController : MonoBehaviour
 
     void HandleFalseDamageIndicators()
     {
-        if (damageIndicatorParent == null || damageIndicatorPrefab == null) return;
+        if (cameraData == null) return;
 
         if (Time.time < nextFalseDamageTime) return;
 
-        // Schedule next false indicator
         nextFalseDamageTime = Time.time + Random.Range(2f, 6f) / corruptionLevel;
 
-        // Spawn a false damage indicator from a random direction
-        GameObject indicator = Instantiate(damageIndicatorPrefab, damageIndicatorParent);
-        float randomAngle = Random.Range(0f, 360f);
-        indicator.transform.localRotation = Quaternion.Euler(0, 0, randomAngle);
+        if (flashRoutine != null)
+            StopCoroutine(flashRoutine);
 
-        // Auto-destroy after brief flash
-        Destroy(indicator, 0.5f);
+        flashRoutine = StartCoroutine(FalseFlashRoutine());
+    }
+
+    IEnumerator FalseFlashRoutine()
+    {
+        cameraData.SetRenderer(damageRendererIndex);
+        yield return new WaitForSeconds(falseFlashDuration);
+        cameraData.SetRenderer(activeDrugRendererIndex);
+        flashRoutine = null;
     }
 }

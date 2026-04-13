@@ -1,9 +1,11 @@
 using UnityEngine;
+using UnityEngine.Rendering.Universal;
 using System;
+using System.Collections;
 
 /// <summary>
-/// Player health system. Takes damage from enemies and integrates with
-/// RagePullSystem (steroids) and HUD damage indicators.
+/// Player health system. Takes damage from enemies, flashes a damage
+/// renderer via URP renderer index swap, and integrates with RagePullSystem.
 /// </summary>
 public class PlayerHealth : MonoBehaviour
 {
@@ -12,11 +14,16 @@ public class PlayerHealth : MonoBehaviour
 
     [Header("References")]
     public RagePullSystem ragePullSystem;
-    public HUDController hudController;
+    public Camera cam;
 
-    [Header("Damage Feedback")]
-    public GameObject realDamageIndicatorPrefab;
-    public RectTransform damageIndicatorParent;
+    [Header("Damage Renderer")]
+    [Tooltip("URP Renderer List index for the damage indicator shader")]
+    public int damageRendererIndex = 3;
+    public float flashDuration = 0.2f;
+
+    private UniversalAdditionalCameraData cameraData;
+    private int activeDrugRendererIndex;
+    private Coroutine flashRoutine;
 
     public static event Action<float> OnHealthChanged;
     public static event Action OnPlayerDied;
@@ -25,6 +32,24 @@ public class PlayerHealth : MonoBehaviour
     {
         currentHealth = maxHealth;
         OnHealthChanged?.Invoke(currentHealth / maxHealth);
+
+        if (cam != null)
+            cameraData = cam.GetComponent<UniversalAdditionalCameraData>();
+    }
+
+    void OnEnable()
+    {
+        DrugEventBus.OnDrugStateChanged += OnDrugStateChanged;
+    }
+
+    void OnDisable()
+    {
+        DrugEventBus.OnDrugStateChanged -= OnDrugStateChanged;
+    }
+
+    void OnDrugStateChanged(DrugStateData state)
+    {
+        activeDrugRendererIndex = state.rendererIndex;
     }
 
     public void TakeDamage(float damage, Vector3 sourcePosition)
@@ -34,19 +59,13 @@ public class PlayerHealth : MonoBehaviour
 
         OnHealthChanged?.Invoke(currentHealth / maxHealth);
 
-        // Trigger steroid rage pull
         if (ragePullSystem != null)
-        {
             ragePullSystem.OnDamageTaken(sourcePosition);
-        }
 
-        // Show real damage indicator pointing toward source
-        ShowDamageIndicator(sourcePosition);
+        FlashDamageRenderer();
 
         if (currentHealth <= 0)
-        {
             Die();
-        }
     }
 
     public void Heal(float amount)
@@ -55,26 +74,26 @@ public class PlayerHealth : MonoBehaviour
         OnHealthChanged?.Invoke(currentHealth / maxHealth);
     }
 
-    void ShowDamageIndicator(Vector3 sourcePosition)
+    void FlashDamageRenderer()
     {
-        if (realDamageIndicatorPrefab == null || damageIndicatorParent == null) return;
+        if (cameraData == null) return;
 
-        GameObject indicator = Instantiate(realDamageIndicatorPrefab, damageIndicatorParent);
+        if (flashRoutine != null)
+            StopCoroutine(flashRoutine);
 
-        // Calculate angle from player forward to damage source
-        Vector3 dir = (sourcePosition - transform.position).normalized;
-        float angle = Mathf.Atan2(dir.x, dir.z) * Mathf.Rad2Deg;
-        float playerAngle = transform.eulerAngles.y;
-        float relativeAngle = angle - playerAngle;
+        flashRoutine = StartCoroutine(DamageFlashRoutine());
+    }
 
-        indicator.transform.localRotation = Quaternion.Euler(0, 0, -relativeAngle);
-
-        Destroy(indicator, 0.8f);
+    IEnumerator DamageFlashRoutine()
+    {
+        cameraData.SetRenderer(damageRendererIndex);
+        yield return new WaitForSeconds(flashDuration);
+        cameraData.SetRenderer(activeDrugRendererIndex);
+        flashRoutine = null;
     }
 
     void Die()
     {
         OnPlayerDied?.Invoke();
-        // Respawn, game over screen, etc. — implement as needed
     }
 }
