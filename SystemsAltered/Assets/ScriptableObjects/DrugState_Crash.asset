@@ -21,9 +21,27 @@ MonoBehaviour:
   gravityScale: 1
   lookSensitivity: 0.7
   fov: 55
-  rendererIndex: 2
+  rendererIndex: 1
   spawnFakeEnemies: 0
   fakeEnemyChance: 0
+  escalatingHallucinations: 0
+  hudCorruptionThreshold: 0.4
+  geometryFractureThreshold: 0.7
+  enableParanoia: 0
+  phantomAudioInterval: {x: 3, y: 8}
+  paranoiaCameraPull: 5
+  spawnShadowFigures: 0
+  enableBreathingGeometry: 0
+  breathingAmplitude: 0.05
+  invertDoorVisuals: 0
+  enableObjectDrift: 0
+  objectDriftSpeed: 0.2
+  jumpVariance: 0
+  enableRagePull: 0
+  ragePullDuration: 0.3
+  ragePullForce: 8
+  cameraHeightOffset: 0
+  tunnelVignetteIntensity: 0
   fireRate: 5
   recoil: 1
   spread: 0.01

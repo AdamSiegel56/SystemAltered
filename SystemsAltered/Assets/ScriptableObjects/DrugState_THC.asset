@@ -10,18 +10,18 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 5d5da3cb9659c274b95a132b61191b10, type: 3}
-  m_Name: DrugState_Cocaine
+  m_Name: DrugState_THC
   m_EditorClassIdentifier: Assembly-CSharp::DrugStateData
-  stateType: 1
+  stateType: 3
   duration: 8
   hasCrash: 1
   crashState: {fileID: 11400000, guid: 389a62c704ea653478e3104c980976ed, type: 2}
-  moveSpeed: 10
-  jumpForce: 5
-  gravityScale: 1
+  moveSpeed: 8
+  jumpForce: 8
+  gravityScale: 0.5
   lookSensitivity: 1
-  fov: 90
-  rendererIndex: 2
+  fov: 55
+  rendererIndex: 3
   spawnFakeEnemies: 0
   fakeEnemyChance: 0
   escalatingHallucinations: 0
@@ -31,7 +31,7 @@ MonoBehaviour:
   phantomAudioInterval: {x: 3, y: 8}
   paranoiaCameraPull: 5
   spawnShadowFigures: 0
-  enableBreathingGeometry: 0
+  enableBreathingGeometry: 1
   breathingAmplitude: 0.05
   invertDoorVisuals: 0
   enableObjectDrift: 0

@@ -619,6 +619,67 @@ Mesh:
       - serializedVersion: 1
         m_IndexStart: 0
         m_IndexCount: 0
+--- !u!1001 &234452879
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 2711710389385385684, guid: 6bbbddb58724fda41aeaaf75e83ad3e8, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: -4
+      objectReference: {fileID: 0}
+    - target: {fileID: 2711710389385385684, guid: 6bbbddb58724fda41aeaaf75e83ad3e8, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 2.17
+      objectReference: {fileID: 0}
+    - target: {fileID: 2711710389385385684, guid: 6bbbddb58724fda41aeaaf75e83ad3e8, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: -6
+      objectReference: {fileID: 0}
+    - target: {fileID: 2711710389385385684, guid: 6bbbddb58724fda41aeaaf75e83ad3e8, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2711710389385385684, guid: 6bbbddb58724fda41aeaaf75e83ad3e8, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2711710389385385684, guid: 6bbbddb58724fda41aeaaf75e83ad3e8, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2711710389385385684, guid: 6bbbddb58724fda41aeaaf75e83ad3e8, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2711710389385385684, guid: 6bbbddb58724fda41aeaaf75e83ad3e8, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2711710389385385684, guid: 6bbbddb58724fda41aeaaf75e83ad3e8, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2711710389385385684, guid: 6bbbddb58724fda41aeaaf75e83ad3e8, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3507060338024605068, guid: 6bbbddb58724fda41aeaaf75e83ad3e8, type: 3}
+      propertyPath: m_Name
+      value: DrugPickup (1)
+      objectReference: {fileID: 0}
+    - target: {fileID: 5023071742587428022, guid: 6bbbddb58724fda41aeaaf75e83ad3e8, type: 3}
+      propertyPath: state
+      value: 
+      objectReference: {fileID: 11400000, guid: d9445b77294cd1e4db17feb6319dc999, type: 2}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 6bbbddb58724fda41aeaaf75e83ad3e8, type: 3}
 --- !u!1 &263938792
 GameObject:
   m_ObjectHideFlags: 0
@@ -737,6 +798,67 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0, y: 0}
+--- !u!1001 &288835200
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 2711710389385385684, guid: 6bbbddb58724fda41aeaaf75e83ad3e8, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: -4
+      objectReference: {fileID: 0}
+    - target: {fileID: 2711710389385385684, guid: 6bbbddb58724fda41aeaaf75e83ad3e8, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 2.17
+      objectReference: {fileID: 0}
+    - target: {fileID: 2711710389385385684, guid: 6bbbddb58724fda41aeaaf75e83ad3e8, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: -2
+      objectReference: {fileID: 0}
+    - target: {fileID: 2711710389385385684, guid: 6bbbddb58724fda41aeaaf75e83ad3e8, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2711710389385385684, guid: 6bbbddb58724fda41aeaaf75e83ad3e8, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2711710389385385684, guid: 6bbbddb58724fda41aeaaf75e83ad3e8, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2711710389385385684, guid: 6bbbddb58724fda41aeaaf75e83ad3e8, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2711710389385385684, guid: 6bbbddb58724fda41aeaaf75e83ad3e8, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2711710389385385684, guid: 6bbbddb58724fda41aeaaf75e83ad3e8, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2711710389385385684, guid: 6bbbddb58724fda41aeaaf75e83ad3e8, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3507060338024605068, guid: 6bbbddb58724fda41aeaaf75e83ad3e8, type: 3}
+      propertyPath: m_Name
+      value: DrugPickup (4)
+      objectReference: {fileID: 0}
+    - target: {fileID: 5023071742587428022, guid: 6bbbddb58724fda41aeaaf75e83ad3e8, type: 3}
+      propertyPath: state
+      value: 
+      objectReference: {fileID: 11400000, guid: 94d1fe18cb0b95c41b89d7643b38ffe4, type: 2}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 6bbbddb58724fda41aeaaf75e83ad3e8, type: 3}
 --- !u!1 &290455535
 GameObject:
   m_ObjectHideFlags: 0
@@ -6203,6 +6325,124 @@ Mesh:
       - serializedVersion: 1
         m_IndexStart: 0
         m_IndexCount: 0
+--- !u!1001 &642851830
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 2711710389385385684, guid: 6bbbddb58724fda41aeaaf75e83ad3e8, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: -4
+      objectReference: {fileID: 0}
+    - target: {fileID: 2711710389385385684, guid: 6bbbddb58724fda41aeaaf75e83ad3e8, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 2.17
+      objectReference: {fileID: 0}
+    - target: {fileID: 2711710389385385684, guid: 6bbbddb58724fda41aeaaf75e83ad3e8, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: -4
+      objectReference: {fileID: 0}
+    - target: {fileID: 2711710389385385684, guid: 6bbbddb58724fda41aeaaf75e83ad3e8, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2711710389385385684, guid: 6bbbddb58724fda41aeaaf75e83ad3e8, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2711710389385385684, guid: 6bbbddb58724fda41aeaaf75e83ad3e8, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2711710389385385684, guid: 6bbbddb58724fda41aeaaf75e83ad3e8, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2711710389385385684, guid: 6bbbddb58724fda41aeaaf75e83ad3e8, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2711710389385385684, guid: 6bbbddb58724fda41aeaaf75e83ad3e8, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2711710389385385684, guid: 6bbbddb58724fda41aeaaf75e83ad3e8, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3507060338024605068, guid: 6bbbddb58724fda41aeaaf75e83ad3e8, type: 3}
+      propertyPath: m_Name
+      value: DrugPickup
+      objectReference: {fileID: 0}
+    - target: {fileID: 5023071742587428022, guid: 6bbbddb58724fda41aeaaf75e83ad3e8, type: 3}
+      propertyPath: state
+      value: 
+      objectReference: {fileID: 11400000, guid: d110c79184b0b2b499db360fbd9befbd, type: 2}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 6bbbddb58724fda41aeaaf75e83ad3e8, type: 3}
+--- !u!1001 &696962402
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 2711710389385385684, guid: 6bbbddb58724fda41aeaaf75e83ad3e8, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: -4
+      objectReference: {fileID: 0}
+    - target: {fileID: 2711710389385385684, guid: 6bbbddb58724fda41aeaaf75e83ad3e8, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 2.17
+      objectReference: {fileID: 0}
+    - target: {fileID: 2711710389385385684, guid: 6bbbddb58724fda41aeaaf75e83ad3e8, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: -10
+      objectReference: {fileID: 0}
+    - target: {fileID: 2711710389385385684, guid: 6bbbddb58724fda41aeaaf75e83ad3e8, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2711710389385385684, guid: 6bbbddb58724fda41aeaaf75e83ad3e8, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2711710389385385684, guid: 6bbbddb58724fda41aeaaf75e83ad3e8, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2711710389385385684, guid: 6bbbddb58724fda41aeaaf75e83ad3e8, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2711710389385385684, guid: 6bbbddb58724fda41aeaaf75e83ad3e8, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2711710389385385684, guid: 6bbbddb58724fda41aeaaf75e83ad3e8, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2711710389385385684, guid: 6bbbddb58724fda41aeaaf75e83ad3e8, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3507060338024605068, guid: 6bbbddb58724fda41aeaaf75e83ad3e8, type: 3}
+      propertyPath: m_Name
+      value: DrugPickup (3)
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 6bbbddb58724fda41aeaaf75e83ad3e8, type: 3}
 --- !u!1 &702353922
 GameObject:
   m_ObjectHideFlags: 0
@@ -6218,7 +6458,7 @@ GameObject:
   - component: {fileID: 702353924}
   - component: {fileID: 702353923}
   - component: {fileID: 702353929}
-  m_Layer: 8
+  m_Layer: 6
   m_Name: Cube (5)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -13290,6 +13530,67 @@ Mesh:
       - serializedVersion: 1
         m_IndexStart: 0
         m_IndexCount: 0
+--- !u!1001 &1372556626
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 2711710389385385684, guid: 6bbbddb58724fda41aeaaf75e83ad3e8, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: -4
+      objectReference: {fileID: 0}
+    - target: {fileID: 2711710389385385684, guid: 6bbbddb58724fda41aeaaf75e83ad3e8, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 2.17
+      objectReference: {fileID: 0}
+    - target: {fileID: 2711710389385385684, guid: 6bbbddb58724fda41aeaaf75e83ad3e8, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: -8
+      objectReference: {fileID: 0}
+    - target: {fileID: 2711710389385385684, guid: 6bbbddb58724fda41aeaaf75e83ad3e8, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2711710389385385684, guid: 6bbbddb58724fda41aeaaf75e83ad3e8, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2711710389385385684, guid: 6bbbddb58724fda41aeaaf75e83ad3e8, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2711710389385385684, guid: 6bbbddb58724fda41aeaaf75e83ad3e8, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2711710389385385684, guid: 6bbbddb58724fda41aeaaf75e83ad3e8, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2711710389385385684, guid: 6bbbddb58724fda41aeaaf75e83ad3e8, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2711710389385385684, guid: 6bbbddb58724fda41aeaaf75e83ad3e8, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3507060338024605068, guid: 6bbbddb58724fda41aeaaf75e83ad3e8, type: 3}
+      propertyPath: m_Name
+      value: DrugPickup (2)
+      objectReference: {fileID: 0}
+    - target: {fileID: 5023071742587428022, guid: 6bbbddb58724fda41aeaaf75e83ad3e8, type: 3}
+      propertyPath: state
+      value: 
+      objectReference: {fileID: 11400000, guid: d2476006a29ab7f4b868b76a66c51b32, type: 2}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 6bbbddb58724fda41aeaaf75e83ad3e8, type: 3}
 --- !u!1 &1500557478
 GameObject:
   m_ObjectHideFlags: 0
@@ -14540,7 +14841,7 @@ GameObject:
   - component: {fileID: 1851928755}
   - component: {fileID: 1851928754}
   - component: {fileID: 1851928760}
-  m_Layer: 8
+  m_Layer: 6
   m_Name: Cube (4)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -15474,3 +15775,8 @@ SceneRoots:
   - {fileID: 263938797}
   - {fileID: 1195830081}
   - {fileID: 24094020}
+  - {fileID: 642851830}
+  - {fileID: 234452879}
+  - {fileID: 1372556626}
+  - {fileID: 696962402}
+  - {fileID: 288835200}

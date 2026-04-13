@@ -10,18 +10,18 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 5d5da3cb9659c274b95a132b61191b10, type: 3}
-  m_Name: DrugState_Cocaine
+  m_Name: DrugState_Steroid
   m_EditorClassIdentifier: Assembly-CSharp::DrugStateData
-  stateType: 1
+  stateType: 2
   duration: 8
   hasCrash: 1
   crashState: {fileID: 11400000, guid: 389a62c704ea653478e3104c980976ed, type: 2}
-  moveSpeed: 10
+  moveSpeed: 9
   jumpForce: 5
   gravityScale: 1
   lookSensitivity: 1
-  fov: 90
-  rendererIndex: 2
+  fov: 50
+  rendererIndex: 4
   spawnFakeEnemies: 0
   fakeEnemyChance: 0
   escalatingHallucinations: 0
@@ -37,7 +37,7 @@ MonoBehaviour:
   enableObjectDrift: 0
   objectDriftSpeed: 0.2
   jumpVariance: 0
-  enableRagePull: 0
+  enableRagePull: 1
   ragePullDuration: 0.3
   ragePullForce: 8
   cameraHeightOffset: 0
