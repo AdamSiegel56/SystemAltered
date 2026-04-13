@@ -8,8 +8,12 @@ public class WeaponController : MonoBehaviour
 
     public float bulletSpeed = 50f;
 
+    [Header("HUD")]
+    public HUDController hudController;
+
     private DrugStateData currentState;
     private float nextFireTime;
+    private int ammoCount = 30;
 
     void OnEnable()
     {
@@ -61,6 +65,12 @@ public class WeaponController : MonoBehaviour
             bullet.damage = damage;
 
         bullet.Init(direction);
+
+        ammoCount = Mathf.Max(0, ammoCount - 1);
+
+        // Report real ammo to HUD (HUDController handles corruption display)
+        if (hudController != null)
+            hudController.SetRealAmmo(ammoCount);
 
         ApplyRecoil();
     }

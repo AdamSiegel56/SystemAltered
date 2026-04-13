@@ -108,6 +108,13 @@ public class PlayerMovement : MonoBehaviour
 
         float jumpForce = currentState != null ? currentState.jumpForce : baseJumpForce;
 
+        // THC jump variance: randomize jump height within ±jumpVariance percent
+        if (currentState != null && currentState.jumpVariance > 0f)
+        {
+            float variance = Random.Range(-currentState.jumpVariance, currentState.jumpVariance);
+            jumpForce *= (1f + variance);
+        }
+
         rb.linearVelocity = new Vector3(rb.linearVelocity.x, 0f, rb.linearVelocity.z);
         rb.AddForce(transform.up * jumpForce, ForceMode.Impulse);
 
