@@ -3,9 +3,8 @@ using UnityEngine.UI;
 
 /// <summary>
 /// World-space health bar that floats above an entity.
-/// Works for real enemies, fake enemies, and the player.
-/// For enemies: attach to the enemy prefab root.
-/// The bar always faces the camera (billboard).
+/// Uses Image fill for the bar visual. Billboard-faces the camera.
+/// Hides when full.
 /// </summary>
 public class HealthBar : MonoBehaviour
 {
@@ -20,8 +19,8 @@ public class HealthBar : MonoBehaviour
 
     [Header("Colors")]
     public Color fullHealthColor = Color.green;
+    public Color midHealthColor = Color.yellow;
     public Color lowHealthColor = Color.red;
-    public float lowHealthThreshold = 0.3f;
 
     [Header("Behavior")]
     public bool hideWhenFull = true;
@@ -43,11 +42,9 @@ public class HealthBar : MonoBehaviour
     {
         if (target == null || mainCam == null) return;
 
-        // Billboard: face camera
         transform.position = target.position + offset;
         transform.forward = mainCam.transform.forward;
 
-        // Hide timer
         if (hideWhenFull)
         {
             showTimer -= Time.deltaTime;
@@ -65,10 +62,15 @@ public class HealthBar : MonoBehaviour
         if (fillImage != null)
         {
             fillImage.fillAmount = currentFill;
-            fillImage.color = currentFill <= lowHealthThreshold ? lowHealthColor : fullHealthColor;
+
+            if (currentFill > 0.6f)
+                fillImage.color = fullHealthColor;
+            else if (currentFill > 0.3f)
+                fillImage.color = midHealthColor;
+            else
+                fillImage.color = lowHealthColor;
         }
 
-        // Show the bar when health changes
         if (canvas != null && currentFill < 1f)
         {
             canvas.gameObject.SetActive(true);

@@ -1,38 +1,55 @@
 using UnityEngine;
 
 /// <summary>
-/// Bullet fired by enemies. Damages the player on contact and notifies
-/// RagePullSystem of the hit direction. Ignores other enemies.
+/// Bullet fired by enemies. Uses Rigidbody velocity for movement
+/// so Unity's physics handles collision detection via OnTriggerEnter.
+/// Continuous Dynamic collision detection prevents tunneling.
 /// </summary>
+[RequireComponent(typeof(Rigidbody))]
+[RequireComponent(typeof(SphereCollider))]
 public class EnemyBullet : MonoBehaviour
 {
     public float speed = 30f;
     public float lifeTime = 3f;
     public float damage = 8f;
 
-    private Vector3 direction;
     private Vector3 originPosition;
+    private Rigidbody rb;
 
     public void Init(Vector3 dir)
     {
-        direction = dir.normalized;
         originPosition = transform.position;
+
+        rb = GetComponent<Rigidbody>();
+        rb.useGravity = false;
+        rb.isKinematic = false;
+        rb.collisionDetectionMode = CollisionDetectionMode.ContinuousDynamic;
+        rb.linearVelocity = dir.normalized * speed;
+
+        // Ignore all enemy colliders so the bullet doesn't hit the shooter
+        IgnoreEnemyColliders();
+
         Destroy(gameObject, lifeTime);
     }
 
-    void Update()
+    void IgnoreEnemyColliders()
     {
-        transform.position += direction * speed * Time.deltaTime;
+        // Ignore everything on the Enemy layer
+        int enemyLayer = LayerMask.NameToLayer("Enemy");
+        if (enemyLayer >= 0)
+        {
+            Physics.IgnoreLayerCollision(gameObject.layer, enemyLayer, true);
+        }
     }
 
     void OnTriggerEnter(Collider other)
     {
-        // Ignore other enemies and fake enemies
+        // Skip enemies and fake enemies
         if (other.CompareTag("Enemy") || other.CompareTag("FakeEnemy"))
             return;
 
-        // Hit the player
-        var playerHealth = other.GetComponent<PlayerHealth>();
+        // Find PlayerHealth anywhere in hierarchy
+        var playerHealth = other.GetComponentInParent<PlayerHealth>();
         if (playerHealth != null)
         {
             playerHealth.TakeDamage(damage, originPosition);
@@ -40,7 +57,7 @@ public class EnemyBullet : MonoBehaviour
             return;
         }
 
-        // Hit a wall or obstacle
+        // Wall or obstacle
         Destroy(gameObject);
     }
 }

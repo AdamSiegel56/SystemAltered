@@ -1,5 +1,12 @@
 using UnityEngine;
 
+/// <summary>
+/// Player bullet. Uses Rigidbody velocity for movement so Unity's
+/// physics handles collision detection via OnTriggerEnter.
+/// Passes through fake enemies with a pop effect.
+/// </summary>
+[RequireComponent(typeof(Rigidbody))]
+[RequireComponent(typeof(SphereCollider))]
 public class Bullet : MonoBehaviour
 {
     public float speed = 50f;
@@ -9,22 +16,41 @@ public class Bullet : MonoBehaviour
     [Header("Fake Enemy Hit")]
     public GameObject fakeHitPopPrefab;
 
-    private Vector3 direction;
+    private Rigidbody rb;
 
     public void Init(Vector3 dir)
     {
-        direction = dir.normalized;
+        rb = GetComponent<Rigidbody>();
+        rb.useGravity = false;
+        rb.isKinematic = false;
+        rb.collisionDetectionMode = CollisionDetectionMode.ContinuousDynamic;
+        rb.linearVelocity = dir.normalized * speed;
+
+        // Ignore the player who shot this bullet
+        IgnoreShooter();
+
         Destroy(gameObject, lifeTime);
     }
 
-    void Update()
+    void IgnoreShooter()
     {
-        transform.position += direction * speed * Time.deltaTime;
+        var playerObj = GameObject.FindGameObjectWithTag("Player");
+        if (playerObj == null) return;
+
+        Collider bulletCol = GetComponent<Collider>();
+        if (bulletCol == null) return;
+
+        // Ignore every collider on the player and its children
+        Collider[] playerColliders = playerObj.GetComponentsInChildren<Collider>();
+        foreach (var col in playerColliders)
+        {
+            Physics.IgnoreCollision(bulletCol, col, true);
+        }
     }
 
     void OnTriggerEnter(Collider other)
     {
-        // Fake enemies: bullet passes through with a visual pop
+        // Fake enemies: pop effect, destroy fake, bullet continues
         if (other.CompareTag("FakeEnemy"))
         {
             if (fakeHitPopPrefab != null)
@@ -33,15 +59,16 @@ public class Bullet : MonoBehaviour
                 Destroy(pop, 0.5f);
             }
 
-            // Destroy the fake on hit so the player learns it was fake
             Destroy(other.gameObject);
-
-            // Bullet continues through — don't destroy it
             return;
         }
 
+        // Ignore the player who shot it
+        if (other.CompareTag("Player"))
+            return;
+
         // Real enemies: deal damage
-        var health = other.GetComponent<EnemyHealth>();
+        var health = other.GetComponentInParent<EnemyHealth>();
         if (health != null)
         {
             health.TakeDamage(damage);

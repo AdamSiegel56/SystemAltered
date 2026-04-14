@@ -27,16 +27,12 @@ MonoBehaviour:
   escalatingHallucinations: 0
   hudCorruptionThreshold: 0.4
   geometryFractureThreshold: 0.7
-  enableParanoia: 0
-  phantomAudioInterval: {x: 3, y: 8}
-  paranoiaCameraPull: 5
-  spawnShadowFigures: 0
   enableBreathingGeometry: 1
   breathingAmplitude: 0.05
   invertDoorVisuals: 0
-  enableObjectDrift: 0
+  enableObjectDrift: 1
   objectDriftSpeed: 0.2
-  jumpVariance: 0
+  jumpVariance: 0.3
   enableRagePull: 0
   ragePullDuration: 0.3
   ragePullForce: 8

@@ -8,11 +8,6 @@ public enum EnemyState
     Attack
 }
 
-/// <summary>
-/// Core enemy AI. When disguised (player sober), stands completely still.
-/// When revealed, patrols by picking random points within a radius (no waypoints
-/// needed), chases the player on detection, and shoots bullets from range.
-/// </summary>
 [RequireComponent(typeof(NavMeshAgent))]
 [RequireComponent(typeof(EnemyHealth))]
 public class EnemyAI : MonoBehaviour
@@ -40,6 +35,8 @@ public class EnemyAI : MonoBehaviour
 
     [Header("Disguise (Sober State)")]
     public GameObject realModel;
+    public GameObject hitbox;
+    
     public GameObject disguiseModel;
 
     [Header("Aggression Scaling")]
@@ -47,8 +44,10 @@ public class EnemyAI : MonoBehaviour
     public float chaseSpeedMultiplier = 1.5f;
 
     [Header("Ground Alignment")]
-    [Tooltip("Half the capsule height — fixes sinking into floor")]
-    public float modelPivotHeight = 1f;
+    public float groundRayOriginHeight = 3f;
+    public float groundRayDistance = 6f;
+    public float groundYOffset = 0f;
+    public LayerMask groundMask;
 
     private NavMeshAgent agent;
     private EnemyState currentState = EnemyState.Patrol;
@@ -60,14 +59,13 @@ public class EnemyAI : MonoBehaviour
     private bool isDisguised;
     private bool playerOnDrugs;
     private Vector3 spawnPosition;
-
     private float aggressionMultiplier = 1f;
+    private float lostPlayerTimer;
 
     void Start()
     {
         agent = GetComponent<NavMeshAgent>();
         agent.speed = baseSpeed;
-        agent.baseOffset = modelPivotHeight;
         spawnPosition = transform.position;
 
         var playerObj = GameObject.FindGameObjectWithTag("Player");
@@ -78,9 +76,7 @@ public class EnemyAI : MonoBehaviour
         }
 
         if (disguiseModel != null)
-        {
             SetDisguised(true);
-        }
 
         PickRandomPatrolTarget();
     }
@@ -100,9 +96,7 @@ public class EnemyAI : MonoBehaviour
         playerOnDrugs = state.stateType != DrugState.Sober && state.stateType != DrugState.Crash;
 
         if (disguiseModel != null)
-        {
             SetDisguised(!playerOnDrugs);
-        }
 
         switch (state.stateType)
         {
@@ -119,15 +113,17 @@ public class EnemyAI : MonoBehaviour
     {
         if (player == null) return;
 
-        // Disguised enemies are completely frozen
         if (isDisguised)
         {
             agent.isStopped = true;
+            SnapModelToGround();
             return;
         }
 
         agent.isStopped = false;
         attackTimer -= Time.deltaTime;
+
+        SnapModelToGround();
 
         switch (currentState)
         {
@@ -137,13 +133,13 @@ public class EnemyAI : MonoBehaviour
         }
     }
 
-    // --- PATROL (Random Radius) ---
+    // --- PATROL ---
 
     void UpdatePatrol()
     {
         agent.speed = baseSpeed;
 
-        if (CanSeePlayer())
+        if (PlayerInRange(detectRange) && HasLineOfSight())
         {
             TransitionTo(EnemyState.Chase);
             return;
@@ -152,11 +148,8 @@ public class EnemyAI : MonoBehaviour
         if (!agent.pathPending && agent.remainingDistance < 1f)
         {
             patrolWaitTimer -= Time.deltaTime;
-
             if (patrolWaitTimer <= 0f)
-            {
                 PickRandomPatrolTarget();
-            }
         }
     }
 
@@ -176,7 +169,6 @@ public class EnemyAI : MonoBehaviour
             }
         }
 
-        // Fallback: go back to spawn
         agent.SetDestination(spawnPosition);
         patrolWaitTimer = patrolWaitTime;
     }
@@ -188,46 +180,48 @@ public class EnemyAI : MonoBehaviour
         agent.speed = baseSpeed * chaseSpeedMultiplier * aggressionMultiplier;
         agent.SetDestination(player.position);
 
-        float dist = Vector3.Distance(transform.position, player.position);
+        float dist = DistToPlayer();
 
-        if (dist <= attackRange && CanSeePlayer())
+        if (dist <= attackRange)
         {
             TransitionTo(EnemyState.Attack);
             return;
         }
 
-        if (dist > detectRange * 1.5f || !CanSeePlayer())
+        if (dist > detectRange * 1.5f)
         {
             TransitionTo(EnemyState.Patrol);
         }
     }
 
-    // --- ATTACK (Ranged Shooting) ---
+    // --- ATTACK ---
 
     void UpdateAttack()
     {
-        float dist = Vector3.Distance(transform.position, player.position);
+        float dist = DistToPlayer();
 
         // Face the player
-        Vector3 lookDir = (player.position - transform.position).normalized;
+        Vector3 lookDir = (player.position - transform.position);
         lookDir.y = 0;
         if (lookDir.sqrMagnitude > 0.01f)
             transform.rotation = Quaternion.Slerp(
                 transform.rotation,
-                Quaternion.LookRotation(lookDir),
+                Quaternion.LookRotation(lookDir.normalized),
                 Time.deltaTime * 8f
             );
 
-        // Keep some distance — stop moving when in range, chase if too far
-        if (dist > attackRange * 1.2f || !CanSeePlayer())
+        // Stop moving while attacking
+        agent.SetDestination(transform.position);
+
+        // Player moved too far away — chase again
+        if (dist > attackRange * 1.5f)
         {
             TransitionTo(EnemyState.Chase);
             return;
         }
 
-        // Stand still while shooting
-        agent.SetDestination(transform.position);
-
+        // Shoot on cooldown — no line of sight check here,
+        // just range. If they're close enough, fire.
         if (attackTimer <= 0f)
         {
             Shoot();
@@ -239,17 +233,20 @@ public class EnemyAI : MonoBehaviour
     {
         Transform origin = firePoint != null ? firePoint : transform;
 
-        Vector3 dirToPlayer = (player.position + Vector3.up * 0.8f - origin.position).normalized;
+        // Aim at player center mass
+        Vector3 targetPos = player.position + Vector3.up * 0.8f;
+        Vector3 dirToPlayer = (targetPos - origin.position).normalized;
 
-        // Add spread
         dirToPlayer += origin.right * Random.Range(-aimSpread, aimSpread);
         dirToPlayer += origin.up * Random.Range(-aimSpread, aimSpread);
         dirToPlayer.Normalize();
 
-        // Spawn bullet
+        // Spawn bullet ahead of fire point to clear enemy collider
+        Vector3 spawnPos = origin.position + dirToPlayer * 1f;
+
         if (enemyBulletPrefab != null)
         {
-            GameObject bulletObj = Instantiate(enemyBulletPrefab, origin.position, Quaternion.identity);
+            GameObject bulletObj = Instantiate(enemyBulletPrefab, spawnPos, Quaternion.identity);
             var bullet = bulletObj.GetComponent<EnemyBullet>();
             if (bullet != null)
             {
@@ -259,7 +256,6 @@ public class EnemyAI : MonoBehaviour
             }
         }
 
-        // Muzzle flash
         if (muzzleFlashPrefab != null)
         {
             GameObject flash = Instantiate(muzzleFlashPrefab, origin.position, origin.rotation);
@@ -269,17 +265,30 @@ public class EnemyAI : MonoBehaviour
 
     // --- DETECTION ---
 
-    bool CanSeePlayer()
+    float DistToPlayer()
     {
-        float dist = Vector3.Distance(transform.position, player.position);
-        if (dist > detectRange) return false;
+        return Vector3.Distance(transform.position, player.position);
+    }
 
-        Vector3 dirToPlayer = (player.position - transform.position).normalized;
-        float angle = Vector3.Angle(transform.forward, dirToPlayer);
-        if (angle > fieldOfView * 0.5f) return false;
+    bool PlayerInRange(float range)
+    {
+        return DistToPlayer() <= range;
+    }
 
-        if (Physics.Raycast(transform.position + Vector3.up, dirToPlayer, dist, obstacleMask))
+    bool HasLineOfSight()
+    {
+        // Raycast from eye height toward player center mass
+        Vector3 eyePos = transform.position + Vector3.up * 1.5f;
+        Vector3 targetPos = player.position + Vector3.up * 0.8f;
+        Vector3 dir = (targetPos - eyePos).normalized;
+        float dist = Vector3.Distance(eyePos, targetPos);
+
+        // Only check obstacles — NOT the ground, NOT enemies
+        if (Physics.Raycast(eyePos, dir, out RaycastHit hit, dist, obstacleMask))
+        {
+            // Hit an obstacle before reaching the player — blocked
             return false;
+        }
 
         return true;
     }
@@ -295,6 +304,42 @@ public class EnemyAI : MonoBehaviour
 
         if (disguiseModel != null)
             disguiseModel.SetActive(disguised);
+
+        var health = GetComponent<EnemyHealth>();
+        if (health != null)
+            health.invulnerable = disguised;
+    }
+
+    // --- GROUND ALIGNMENT ---
+
+    void SnapModelToGround()
+    {
+        // Only move child models, not the agent transform itself
+        // This avoids fighting with NavMeshAgent
+        if (realModel == null && disguiseModel == null) return;
+
+        Vector3 rayOrigin = transform.position + Vector3.up * groundRayOriginHeight;
+
+        if (Physics.Raycast(rayOrigin, Vector3.down, out RaycastHit hit, groundRayDistance, groundMask))
+        {
+            float targetY = hit.point.y + groundYOffset - transform.position.y;
+
+            if (realModel != null)
+            {
+                Vector3 pos = realModel.transform.localPosition;
+                pos.y = targetY;
+                realModel.transform.localPosition = pos;
+                hitbox.transform.localPosition = pos;
+            }
+
+            if (disguiseModel != null)
+            {
+                Vector3 pos = disguiseModel.transform.localPosition;
+                pos.y = targetY;
+                disguiseModel.transform.localPosition = pos;
+                hitbox.transform.localPosition = pos;
+            }
+        }
     }
 
     // --- TRANSITIONS ---
@@ -304,9 +349,7 @@ public class EnemyAI : MonoBehaviour
         currentState = newState;
 
         if (newState == EnemyState.Patrol)
-        {
             PickRandomPatrolTarget();
-        }
     }
 
     void OnDrawGizmosSelected()

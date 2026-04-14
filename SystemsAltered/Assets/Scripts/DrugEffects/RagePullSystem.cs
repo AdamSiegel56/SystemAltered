@@ -2,8 +2,8 @@ using UnityEngine;
 
 /// <summary>
 /// Steroids rage pull: when the player takes damage, involuntarily lunge
-/// toward the damage source for a brief, non-cancellable duration.
-/// Attach to the player.
+/// toward the damage source. Camera snaps hard toward the attacker and
+/// the body is pulled by force. Feels aggressive and out of control.
 /// </summary>
 public class RagePullSystem : MonoBehaviour
 {
@@ -15,6 +15,7 @@ public class RagePullSystem : MonoBehaviour
     private bool ragePullActive;
     private float ragePullTimer;
     private Vector3 ragePullDirection;
+    private Vector3 damageSource;
 
     void OnEnable()
     {
@@ -29,36 +30,39 @@ public class RagePullSystem : MonoBehaviour
     void ApplyState(DrugStateData state)
     {
         currentState = state;
-
-        // Reset any active rage pull on state change
         ragePullActive = false;
         ragePullTimer = 0f;
     }
 
-    /// <summary>
-    /// Call this when the player takes damage from a known source position.
-    /// If steroids rage pull is enabled, triggers the involuntary lunge.
-    /// </summary>
     public void OnDamageTaken(Vector3 damageSourcePosition)
     {
         if (currentState == null || !currentState.enableRagePull) return;
 
-        // Start rage pull
+        damageSource = damageSourcePosition;
         ragePullDirection = (damageSourcePosition - transform.position).normalized;
-        ragePullDirection.y = 0; // Keep horizontal
+        ragePullDirection.y = 0;
         ragePullTimer = currentState.ragePullDuration;
         ragePullActive = true;
 
-        // Snap camera toward damage source
+        // Hard camera snap toward damage source — not a gentle lerp
         if (playerCamera != null)
         {
             playerCamera.ApplyRagePull(damageSourcePosition);
+        }
+
+        // Immediate impulse so the player feels it instantly
+        if (playerRigidbody != null)
+        {
+            playerRigidbody.AddForce(
+                ragePullDirection * currentState.ragePullForce * 2f,
+                ForceMode.Impulse
+            );
         }
     }
 
     void FixedUpdate()
     {
-        if (!ragePullActive || playerRigidbody == null) return;
+        if (!ragePullActive || playerRigidbody == null || currentState == null) return;
 
         ragePullTimer -= Time.fixedDeltaTime;
 
@@ -68,10 +72,16 @@ public class RagePullSystem : MonoBehaviour
             return;
         }
 
-        // Apply involuntary force toward damage source
+        // Sustained pull force toward damage source
         playerRigidbody.AddForce(
             ragePullDirection * currentState.ragePullForce,
             ForceMode.Acceleration
         );
+
+        // Keep snapping camera toward source during the pull
+        if (playerCamera != null)
+        {
+            playerCamera.ApplyRagePull(damageSource);
+        }
     }
 }

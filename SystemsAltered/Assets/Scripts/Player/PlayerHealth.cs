@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.SceneManagement;
 
 /// <summary>
 /// Player health system. Takes damage from enemies and integrates with
@@ -17,6 +18,7 @@ public class PlayerHealth : MonoBehaviour
     [Header("Player Health Bar (Screen Space)")]
     public Image healthBarFill;
     public Color fullHealthColor = Color.green;
+    public Color midHealthColor = Color.yellow;
     public Color lowHealthColor = Color.red;
 
     public static event System.Action<float> OnHealthChanged;
@@ -60,11 +62,18 @@ public class PlayerHealth : MonoBehaviour
 
         float normalized = currentHealth / maxHealth;
         healthBarFill.fillAmount = normalized;
-        healthBarFill.color = normalized <= 0.3f ? lowHealthColor : fullHealthColor;
+
+        if (normalized > 0.6f)
+            healthBarFill.color = fullHealthColor;
+        else if (normalized > 0.3f)
+            healthBarFill.color = midHealthColor;
+        else
+            healthBarFill.color = lowHealthColor;
     }
 
     void Die()
     {
         OnPlayerDied?.Invoke();
+        SceneManager.LoadScene("SampleScene");
     }
 }

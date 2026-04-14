@@ -71,11 +71,16 @@ public class PlayerCamera : MonoBehaviour
 
     /// <summary>
     /// Called by RagePullSystem to forcibly rotate camera toward a damage source.
+    /// Uses a strong lerp so the snap is violent and disorienting.
     /// </summary>
     public void ApplyRagePull(Vector3 damageSourceWorld)
     {
         Vector3 dir = (damageSourceWorld - transform.position).normalized;
         float targetYaw = Mathf.Atan2(dir.x, dir.z) * Mathf.Rad2Deg;
-        yRotation = Mathf.LerpAngle(yRotation, targetYaw, 0.5f);
+        yRotation = Mathf.LerpAngle(yRotation, targetYaw, 0.8f);
+
+        // Also pull pitch slightly toward the source
+        float targetPitch = -Mathf.Asin(dir.y) * Mathf.Rad2Deg;
+        xRotation = Mathf.Lerp(xRotation, Mathf.Clamp(targetPitch, -90f, 90f), 0.3f);
     }
 }

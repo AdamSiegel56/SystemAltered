@@ -2,6 +2,7 @@ using UnityEngine;
 
 /// <summary>
 /// Enemy health with hit feedback, death handling, and health bar support.
+/// Set invulnerable = true when disguised so bullets pass through.
 /// </summary>
 public class EnemyHealth : MonoBehaviour
 {
@@ -16,6 +17,12 @@ public class EnemyHealth : MonoBehaviour
 
     [Header("Health Bar")]
     public HealthBar healthBar;
+
+    /// <summary>
+    /// Set by EnemyAI when disguised. While true, TakeDamage does nothing.
+    /// </summary>
+    [HideInInspector]
+    public bool invulnerable;
 
     public static event System.Action<GameObject> OnEnemyKilled;
 
@@ -45,6 +52,8 @@ public class EnemyHealth : MonoBehaviour
 
     public void TakeDamage(float dmg)
     {
+        if (invulnerable) return;
+
         currentHealth -= dmg;
         flashTimer = 0.15f;
 

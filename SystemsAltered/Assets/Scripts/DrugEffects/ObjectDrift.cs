@@ -2,17 +2,18 @@ using UnityEngine;
 
 /// <summary>
 /// THC environmental deception: objects slowly drift from their original
-/// positions when outside the player's view frustum, creating the feeling
-/// that the room rearranges itself when you're not looking.
+/// positions when outside the player's view frustum.
 /// Attach to any driftable object in the arena.
 /// </summary>
 public class ObjectDrift : MonoBehaviour
 {
+    [Header("Drift Settings")]
+    public float maxDriftRadius = 1.5f;
+
     private Vector3 originalPosition;
     private Vector3 driftTarget;
     private float driftSpeed;
     private bool driftEnabled;
-    private float maxDriftRadius = 1.5f;
 
     private Camera playerCam;
 
@@ -20,7 +21,6 @@ public class ObjectDrift : MonoBehaviour
     {
         originalPosition = transform.position;
         driftTarget = originalPosition;
-        playerCam = Camera.main;
     }
 
     void OnEnable()
@@ -40,7 +40,6 @@ public class ObjectDrift : MonoBehaviour
 
         if (!driftEnabled)
         {
-            // Snap back to original position when drug wears off
             transform.position = originalPosition;
             driftTarget = originalPosition;
         }
@@ -48,24 +47,26 @@ public class ObjectDrift : MonoBehaviour
 
     void Update()
     {
-        if (!driftEnabled || playerCam == null) return;
+        if (!driftEnabled) return;
 
-        // Check if this object is visible to the player
-        Vector3 viewportPos = playerCam.WorldToViewportPoint(transform.position);
-        bool isVisible = viewportPos.z > 0
-                         && viewportPos.x > -0.1f && viewportPos.x < 1.1f
-                         && viewportPos.y > -0.1f && viewportPos.y < 1.1f;
-
-        if (isVisible)
+        // Lazy-find camera (Camera.main can be null on first frame)
+        if (playerCam == null)
         {
-            // Player is watching — freeze in place
-            return;
+            playerCam = Camera.main;
+            if (playerCam == null) return;
         }
+
+        // Check visibility using viewport + distance
+        Vector3 viewportPos = playerCam.WorldToViewportPoint(transform.position);
+        bool isVisible = viewportPos.z > 0f
+                         && viewportPos.x > 0.05f && viewportPos.x < 0.95f
+                         && viewportPos.y > 0.05f && viewportPos.y < 0.95f;
+
+        if (isVisible) return;
 
         // Not visible — drift toward target
         if (Vector3.Distance(transform.position, driftTarget) < 0.1f)
         {
-            // Pick new drift target within radius of original position
             Vector2 offset = Random.insideUnitCircle * maxDriftRadius;
             driftTarget = originalPosition + new Vector3(offset.x, 0, offset.y);
         }

@@ -4,16 +4,6 @@ using UnityEngine.AI;
 /// <summary>
 /// Behavior for hallucination enemies. Mimics real enemy movement
 /// and has a fake health bar that always shows full.
-///
-/// Setup:
-/// 1. Duplicate your real Enemy prefab
-/// 2. Remove: EnemyAI, EnemyHealth
-/// 3. Keep: NavMeshAgent, Collider (set Is Trigger = true), all visual children
-///    INCLUDING the HealthBar child canvas
-/// 4. Add: FakeEnemyBehavior
-/// 5. Set Tag to "FakeEnemy"
-/// 6. Set modelPivotHeight to match the real enemy
-/// 7. Drag the HealthBar child into the fakeHealthBar slot
 /// </summary>
 [RequireComponent(typeof(NavMeshAgent))]
 public class FakeEnemyBehavior : MonoBehaviour
@@ -30,8 +20,10 @@ public class FakeEnemyBehavior : MonoBehaviour
     public float chargeStopDistance = 2f;
 
     [Header("Ground Alignment")]
-    [Tooltip("Same as real enemy — half capsule height")]
-    public float modelPivotHeight = 1f;
+    public float groundRayOriginHeight = 3f;
+    public float groundRayDistance = 6f;
+    public float groundYOffset = 0f;
+    public LayerMask groundMask;
 
     [Header("Fake Health Bar")]
     public HealthBar fakeHealthBar;
@@ -45,7 +37,6 @@ public class FakeEnemyBehavior : MonoBehaviour
     {
         agent = GetComponent<NavMeshAgent>();
         agent.speed = moveSpeed;
-        agent.baseOffset = modelPivotHeight;
 
         var playerObj = GameObject.FindGameObjectWithTag("Player");
         if (playerObj != null)
@@ -60,6 +51,8 @@ public class FakeEnemyBehavior : MonoBehaviour
 
     void Update()
     {
+        SnapToGround();
+
         if (agent.pathPending) return;
 
         if (isCharging)
@@ -106,5 +99,17 @@ public class FakeEnemyBehavior : MonoBehaviour
         }
 
         nextWanderTime = Time.time + wanderInterval + Random.Range(-1f, 1f);
+    }
+
+    void SnapToGround()
+    {
+        Vector3 rayOrigin = transform.position + Vector3.up * groundRayOriginHeight;
+
+        if (Physics.Raycast(rayOrigin, Vector3.down, out RaycastHit hit, groundRayDistance, groundMask))
+        {
+            Vector3 pos = transform.position;
+            pos.y = hit.point.y + groundYOffset;
+            transform.position = pos;
+        }
     }
 }

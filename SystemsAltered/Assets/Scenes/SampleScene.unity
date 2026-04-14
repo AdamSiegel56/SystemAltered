@@ -2449,7 +2449,7 @@ MeshCollider:
   serializedVersion: 5
   m_Convex: 0
   m_CookingOptions: 30
-  m_Mesh: {fileID: 321175022}
+  m_Mesh: {fileID: 1569267748}
 --- !u!33 &285933102
 MeshFilter:
   m_ObjectHideFlags: 10
@@ -8019,7 +8019,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2778a6d2c83f82f4d96f2c719b7012b1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::DrugRenderController
-  damageRendererIndex: 3
+  damageRendererIndex: 1
   damageFlashDuration: 0.2
   falseDamageFlashDuration: 0.15
 --- !u!1 &348482420
@@ -8081,7 +8081,7 @@ MeshCollider:
   serializedVersion: 5
   m_Convex: 0
   m_CookingOptions: 30
-  m_Mesh: {fileID: 1325618336}
+  m_Mesh: {fileID: 321175022}
 --- !u!33 &348482423
 MeshFilter:
   m_ObjectHideFlags: 10
@@ -8792,7 +8792,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 0}
+  m_Sprite: {fileID: 21300000, guid: 2eb9a69880ee25643aeacd5afbbdfaf7, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -9205,7 +9205,7 @@ MeshCollider:
   serializedVersion: 5
   m_Convex: 0
   m_CookingOptions: 30
-  m_Mesh: {fileID: 1136878786}
+  m_Mesh: {fileID: 1350111223}
 --- !u!33 &448306571
 MeshFilter:
   m_ObjectHideFlags: 10
@@ -10134,7 +10134,7 @@ MeshCollider:
   serializedVersion: 5
   m_Convex: 0
   m_CookingOptions: 30
-  m_Mesh: {fileID: 3802478}
+  m_Mesh: {fileID: 570672529}
 --- !u!33 &488805261
 MeshFilter:
   m_ObjectHideFlags: 10
@@ -16109,7 +16109,7 @@ MeshCollider:
   serializedVersion: 5
   m_Convex: 0
   m_CookingOptions: 30
-  m_Mesh: {fileID: 1569267748}
+  m_Mesh: {fileID: 429566644}
 --- !u!33 &765382783
 MeshFilter:
   m_ObjectHideFlags: 10
@@ -16794,7 +16794,7 @@ MeshCollider:
   serializedVersion: 5
   m_Convex: 0
   m_CookingOptions: 30
-  m_Mesh: {fileID: 321175022}
+  m_Mesh: {fileID: 1947348071}
 --- !u!33 &839258022
 MeshFilter:
   m_ObjectHideFlags: 10
@@ -17173,7 +17173,7 @@ MeshCollider:
   serializedVersion: 5
   m_Convex: 0
   m_CookingOptions: 30
-  m_Mesh: {fileID: 362933568}
+  m_Mesh: {fileID: 153864607}
 --- !u!33 &866810967
 MeshFilter:
   m_ObjectHideFlags: 10
@@ -18848,13 +18848,13 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1288073087}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 2.45, z: -1.99}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0.45000005, z: 0.01999998}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 330585546}
-  m_Father: {fileID: 0}
+  m_Father: {fileID: 2015047510}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!43 &1325618336
 Mesh:
@@ -19845,7 +19845,7 @@ MeshCollider:
   serializedVersion: 5
   m_Convex: 0
   m_CookingOptions: 30
-  m_Mesh: {fileID: 208618283}
+  m_Mesh: {fileID: 221344753}
 --- !u!33 &1522473924
 MeshFilter:
   m_ObjectHideFlags: 10
@@ -21781,7 +21781,7 @@ MeshCollider:
   serializedVersion: 5
   m_Convex: 0
   m_CookingOptions: 30
-  m_Mesh: {fileID: 2085462700}
+  m_Mesh: {fileID: 738065291}
 --- !u!33 &1713150148
 MeshFilter:
   m_ObjectHideFlags: 10
@@ -22094,6 +22094,72 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1787565900
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1787565901}
+  - component: {fileID: 1787565903}
+  - component: {fileID: 1787565902}
+  m_Layer: 0
+  m_Name: HitBox
+  m_TagString: Player
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1787565901
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1787565900}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 2015047510}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1787565902
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1787565900}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 17cd860d4879fb64b88ffc74082ca7e0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PlayerHitbox
+--- !u!65 &1787565903
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1787565900}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 1
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 1.2, y: 2, z: 1.2}
+  m_Center: {x: 0, y: 0, z: 0}
 --- !u!1 &1913883283
 GameObject:
   m_ObjectHideFlags: 0
@@ -22184,7 +22250,7 @@ MeshCollider:
   serializedVersion: 5
   m_Convex: 0
   m_CookingOptions: 30
-  m_Mesh: {fileID: 1947348071}
+  m_Mesh: {fileID: 714652592}
 --- !u!33 &1916434221
 MeshFilter:
   m_ObjectHideFlags: 10
@@ -22758,7 +22824,7 @@ MeshCollider:
   serializedVersion: 5
   m_Convex: 0
   m_CookingOptions: 30
-  m_Mesh: {fileID: 429566644}
+  m_Mesh: {fileID: 459527475}
 --- !u!33 &1982913276
 MeshFilter:
   m_ObjectHideFlags: 10
@@ -23135,6 +23201,8 @@ Transform:
   - {fileID: 176889647}
   - {fileID: 830296871}
   - {fileID: 1682265986}
+  - {fileID: 1288073089}
+  - {fileID: 1787565901}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &2015047511
@@ -23435,6 +23503,7 @@ MonoBehaviour:
   drugRenderController: {fileID: 330585550}
   healthBarFill: {fileID: 1710317322}
   fullHealthColor: {r: 0, g: 1, b: 0, a: 1}
+  midHealthColor: {r: 1, g: 0.92156863, b: 0.015686275, a: 1}
   lowHealthColor: {r: 1, g: 0, b: 0, a: 1}
 --- !u!43 &2085462700
 Mesh:
@@ -23652,7 +23721,6 @@ SceneRoots:
   - {fileID: 410087041}
   - {fileID: 832575519}
   - {fileID: 2015047510}
-  - {fileID: 1288073089}
   - {fileID: 1610481710}
   - {fileID: 1654492150}
   - {fileID: 488805265}

@@ -80,8 +80,12 @@ public class WeaponController : MonoBehaviour
         Vector3 direction = cam.transform.forward;
         direction += cam.transform.right * Random.Range(-spread, spread);
         direction += cam.transform.up * Random.Range(-spread, spread);
+        direction.Normalize();
 
-        GameObject bulletObj = Instantiate(bulletPrefab, cam.transform.position, Quaternion.identity);
+        // Spawn ahead of camera so bullet clears the player's collider
+        Vector3 spawnPos = cam.transform.position + direction * 1.5f;
+
+        GameObject bulletObj = Instantiate(bulletPrefab, spawnPos, Quaternion.identity);
 
         Bullet bullet = bulletObj.GetComponent<Bullet>();
         bullet.speed = bulletSpeed;
@@ -95,7 +99,6 @@ public class WeaponController : MonoBehaviour
         UpdateHUD();
         ApplyRecoil();
 
-        // Auto-reload when empty
         if (currentAmmo <= 0)
         {
             StartCoroutine(Reload());
