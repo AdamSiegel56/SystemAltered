@@ -1,8 +1,7 @@
 using UnityEngine;
-using System;
 
 /// <summary>
-/// Enemy health with hit feedback and death handling.
+/// Enemy health with hit feedback, death handling, and health bar support.
 /// </summary>
 public class EnemyHealth : MonoBehaviour
 {
@@ -15,7 +14,10 @@ public class EnemyHealth : MonoBehaviour
     private Color originalColor;
     private float flashTimer;
 
-    public static event Action<GameObject> OnEnemyKilled;
+    [Header("Health Bar")]
+    public HealthBar healthBar;
+
+    public static event System.Action<GameObject> OnEnemyKilled;
 
     void Start()
     {
@@ -26,6 +28,9 @@ public class EnemyHealth : MonoBehaviour
             bodyMaterial = bodyRenderer.material;
             originalColor = bodyMaterial.color;
         }
+
+        if (healthBar != null)
+            healthBar.SetFill(1f);
     }
 
     void Update()
@@ -42,6 +47,9 @@ public class EnemyHealth : MonoBehaviour
     {
         currentHealth -= dmg;
         flashTimer = 0.15f;
+
+        if (healthBar != null)
+            healthBar.SetFill(currentHealth / maxHealth);
 
         if (currentHealth <= 0)
         {

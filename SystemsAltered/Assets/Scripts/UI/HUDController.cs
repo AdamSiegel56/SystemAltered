@@ -1,12 +1,10 @@
 using UnityEngine;
-using UnityEngine.Rendering.Universal;
-using System.Collections;
 using TMPro;
 
 /// <summary>
 /// Corrupts the HUD based on meth hallucination intensity.
 /// Displays wrong ammo count and triggers false damage flashes
-/// by briefly swapping to the damage URP renderer index.
+/// through DrugRenderController (the single renderer authority).
 /// </summary>
 public class HUDController : MonoBehaviour
 {
@@ -14,39 +12,11 @@ public class HUDController : MonoBehaviour
     public TextMeshProUGUI ammoText;
     private int realAmmo;
 
-    [Header("False Damage Renderer")]
-    public Camera cam;
-    [Tooltip("URP Renderer List index for the damage indicator shader")]
-    public int damageRendererIndex = 3;
-    public float falseFlashDuration = 0.15f;
-
-    private UniversalAdditionalCameraData cameraData;
-    private int activeDrugRendererIndex;
+    [Header("False Damage")]
+    public DrugRenderController drugRenderController;
 
     private float corruptionLevel;
     private float nextFalseDamageTime;
-    private Coroutine flashRoutine;
-
-    void Start()
-    {
-        if (cam != null)
-            cameraData = cam.GetComponent<UniversalAdditionalCameraData>();
-    }
-
-    void OnEnable()
-    {
-        DrugEventBus.OnDrugStateChanged += OnDrugStateChanged;
-    }
-
-    void OnDisable()
-    {
-        DrugEventBus.OnDrugStateChanged -= OnDrugStateChanged;
-    }
-
-    void OnDrugStateChanged(DrugStateData state)
-    {
-        activeDrugRendererIndex = state.rendererIndex;
-    }
 
     public void SetCorruptionLevel(float level)
     {
@@ -101,23 +71,12 @@ public class HUDController : MonoBehaviour
 
     void HandleFalseDamageIndicators()
     {
-        if (cameraData == null) return;
+        if (drugRenderController == null) return;
 
         if (Time.time < nextFalseDamageTime) return;
 
         nextFalseDamageTime = Time.time + Random.Range(2f, 6f) / corruptionLevel;
 
-        if (flashRoutine != null)
-            StopCoroutine(flashRoutine);
-
-        flashRoutine = StartCoroutine(FalseFlashRoutine());
-    }
-
-    IEnumerator FalseFlashRoutine()
-    {
-        cameraData.SetRenderer(damageRendererIndex);
-        yield return new WaitForSeconds(falseFlashDuration);
-        cameraData.SetRenderer(activeDrugRendererIndex);
-        flashRoutine = null;
+        drugRenderController.FlashFalseDamage();
     }
 }

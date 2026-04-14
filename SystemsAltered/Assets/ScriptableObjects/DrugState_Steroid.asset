@@ -1,0 +1,47 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5d5da3cb9659c274b95a132b61191b10, type: 3}
+  m_Name: DrugState_Steroid
+  m_EditorClassIdentifier: Assembly-CSharp::DrugStateData
+  stateType: 2
+  duration: 8
+  hasCrash: 1
+  crashState: {fileID: 11400000, guid: 389a62c704ea653478e3104c980976ed, type: 2}
+  moveSpeed: 9
+  jumpForce: 5
+  gravityScale: 1
+  lookSensitivity: 1
+  fov: 50
+  rendererIndex: 4
+  spawnFakeEnemies: 0
+  fakeEnemyChance: 0
+  escalatingHallucinations: 0
+  hudCorruptionThreshold: 0.4
+  geometryFractureThreshold: 0.7
+  enableParanoia: 0
+  phantomAudioInterval: {x: 3, y: 8}
+  paranoiaCameraPull: 5
+  spawnShadowFigures: 0
+  enableBreathingGeometry: 0
+  breathingAmplitude: 0.05
+  invertDoorVisuals: 0
+  enableObjectDrift: 0
+  objectDriftSpeed: 0.2
+  jumpVariance: 0
+  enableRagePull: 1
+  ragePullDuration: 0.3
+  ragePullForce: 8
+  cameraHeightOffset: 0
+  tunnelVignetteIntensity: 0
+  fireRate: 10
+  recoil: 1
+  spread: 0.01

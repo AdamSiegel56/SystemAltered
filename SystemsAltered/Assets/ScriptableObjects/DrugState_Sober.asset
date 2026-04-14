@@ -13,10 +13,10 @@ MonoBehaviour:
   m_Name: DrugState_Sober
   m_EditorClassIdentifier: Assembly-CSharp::DrugStateData
   stateType: 0
-  duration: 0
+  duration: 9999
   hasCrash: 0
   crashState: {fileID: 0}
-  moveSpeed: 6
+  moveSpeed: 4
   jumpForce: 5
   gravityScale: 1
   lookSensitivity: 1
@@ -24,6 +24,20 @@ MonoBehaviour:
   rendererIndex: 0
   spawnFakeEnemies: 0
   fakeEnemyChance: 0
+  escalatingHallucinations: 0
+  hudCorruptionThreshold: 0.4
+  geometryFractureThreshold: 0.7
+  enableBreathingGeometry: 0
+  breathingAmplitude: 0.05
+  invertDoorVisuals: 0
+  enableObjectDrift: 0
+  objectDriftSpeed: 0.2
+  jumpVariance: 0
+  enableRagePull: 0
+  ragePullDuration: 0.3
+  ragePullForce: 8
+  cameraHeightOffset: 0
+  tunnelVignetteIntensity: 0
   fireRate: 5
   recoil: 1
   spread: 0.01

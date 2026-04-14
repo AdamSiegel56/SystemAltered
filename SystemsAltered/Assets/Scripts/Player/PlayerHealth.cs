@@ -1,11 +1,9 @@
 using UnityEngine;
-using UnityEngine.Rendering.Universal;
-using System;
-using System.Collections;
+using UnityEngine.UI;
 
 /// <summary>
-/// Player health system. Takes damage from enemies, flashes a damage
-/// renderer via URP renderer index swap, and integrates with RagePullSystem.
+/// Player health system. Takes damage from enemies and integrates with
+/// RagePullSystem, DrugRenderController, and a screen-space health bar.
 /// </summary>
 public class PlayerHealth : MonoBehaviour
 {
@@ -14,42 +12,21 @@ public class PlayerHealth : MonoBehaviour
 
     [Header("References")]
     public RagePullSystem ragePullSystem;
-    public Camera cam;
+    public DrugRenderController drugRenderController;
 
-    [Header("Damage Renderer")]
-    [Tooltip("URP Renderer List index for the damage indicator shader")]
-    public int damageRendererIndex = 3;
-    public float flashDuration = 0.2f;
+    [Header("Player Health Bar (Screen Space)")]
+    public Image healthBarFill;
+    public Color fullHealthColor = Color.green;
+    public Color lowHealthColor = Color.red;
 
-    private UniversalAdditionalCameraData cameraData;
-    private int activeDrugRendererIndex;
-    private Coroutine flashRoutine;
-
-    public static event Action<float> OnHealthChanged;
-    public static event Action OnPlayerDied;
+    public static event System.Action<float> OnHealthChanged;
+    public static event System.Action OnPlayerDied;
 
     void Start()
     {
         currentHealth = maxHealth;
+        UpdateHealthBar();
         OnHealthChanged?.Invoke(currentHealth / maxHealth);
-
-        if (cam != null)
-            cameraData = cam.GetComponent<UniversalAdditionalCameraData>();
-    }
-
-    void OnEnable()
-    {
-        DrugEventBus.OnDrugStateChanged += OnDrugStateChanged;
-    }
-
-    void OnDisable()
-    {
-        DrugEventBus.OnDrugStateChanged -= OnDrugStateChanged;
-    }
-
-    void OnDrugStateChanged(DrugStateData state)
-    {
-        activeDrugRendererIndex = state.rendererIndex;
     }
 
     public void TakeDamage(float damage, Vector3 sourcePosition)
@@ -57,12 +34,14 @@ public class PlayerHealth : MonoBehaviour
         currentHealth -= damage;
         currentHealth = Mathf.Max(0, currentHealth);
 
+        UpdateHealthBar();
         OnHealthChanged?.Invoke(currentHealth / maxHealth);
 
         if (ragePullSystem != null)
             ragePullSystem.OnDamageTaken(sourcePosition);
 
-        FlashDamageRenderer();
+        if (drugRenderController != null)
+            drugRenderController.FlashDamage();
 
         if (currentHealth <= 0)
             Die();
@@ -71,25 +50,17 @@ public class PlayerHealth : MonoBehaviour
     public void Heal(float amount)
     {
         currentHealth = Mathf.Min(currentHealth + amount, maxHealth);
+        UpdateHealthBar();
         OnHealthChanged?.Invoke(currentHealth / maxHealth);
     }
 
-    void FlashDamageRenderer()
+    void UpdateHealthBar()
     {
-        if (cameraData == null) return;
+        if (healthBarFill == null) return;
 
-        if (flashRoutine != null)
-            StopCoroutine(flashRoutine);
-
-        flashRoutine = StartCoroutine(DamageFlashRoutine());
-    }
-
-    IEnumerator DamageFlashRoutine()
-    {
-        cameraData.SetRenderer(damageRendererIndex);
-        yield return new WaitForSeconds(flashDuration);
-        cameraData.SetRenderer(activeDrugRendererIndex);
-        flashRoutine = null;
+        float normalized = currentHealth / maxHealth;
+        healthBarFill.fillAmount = normalized;
+        healthBarFill.color = normalized <= 0.3f ? lowHealthColor : fullHealthColor;
     }
 
     void Die()

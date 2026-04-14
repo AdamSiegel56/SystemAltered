@@ -44,15 +44,6 @@ public class DrugStateData : ScriptableObject
     [Tooltip("Intensity at which geometry starts fracturing")]
     public float geometryFractureThreshold = 0.7f;
 
-    [Header("Paranoia (Cocaine)")]
-    public bool enableParanoia;
-    [Tooltip("Min/max seconds between phantom audio events")]
-    public Vector2 phantomAudioInterval = new Vector2(3f, 8f);
-    [Tooltip("Strength of camera pull toward phantom sounds (deg/sec)")]
-    public float paranoiaCameraPull = 5f;
-    [Tooltip("Enable peripheral shadow figures")]
-    public bool spawnShadowFigures;
-
     [Header("Environmental Deception (THC)")]
     public bool enableBreathingGeometry;
     [Tooltip("Vertex displacement amplitude for wall breathing")]

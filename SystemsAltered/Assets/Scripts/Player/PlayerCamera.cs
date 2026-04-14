@@ -16,11 +16,6 @@ public class PlayerCamera : MonoBehaviour
 
     private Vector2 lookInput;
 
-    // Paranoia camera pull
-    private float paranoiaPullStrength;
-    private float paranoiaPullYaw;   // target yaw offset from phantom audio
-    private float currentPullYaw;
-
     // Steroid camera height
     private float baseCameraY;
     private float targetHeightOffset;
@@ -50,11 +45,6 @@ public class PlayerCamera : MonoBehaviour
         xRotation -= yMouse;
         xRotation = Mathf.Clamp(xRotation, -90f, 90f);
 
-        // Apply paranoia pull — subtly drags yaw toward phantom sound direction
-        currentPullYaw = Mathf.Lerp(currentPullYaw, paranoiaPullYaw, Time.deltaTime * 2f);
-        float pullOffset = currentPullYaw * paranoiaPullStrength * Time.deltaTime;
-        yRotation += pullOffset;
-
         transform.rotation = Quaternion.Euler(xRotation, yRotation, 0f);
         orientation.rotation = Quaternion.Euler(0, yRotation, 0f);
 
@@ -76,25 +66,7 @@ public class PlayerCamera : MonoBehaviour
         if (cam != null)
             cam.fieldOfView = state.fov;
 
-        // Paranoia settings
-        paranoiaPullStrength = state.enableParanoia ? state.paranoiaCameraPull : 0f;
-        if (!state.enableParanoia)
-        {
-            paranoiaPullYaw = 0f;
-            currentPullYaw = 0f;
-        }
-
-        // Steroid height offset
         targetHeightOffset = state.cameraHeightOffset;
-    }
-
-    /// <summary>
-    /// Called by ParanoiaSystem to set which direction a phantom sound came from.
-    /// yawOffset is in degrees: negative = left, positive = right.
-    /// </summary>
-    public void SetParanoiaPullTarget(float yawOffset)
-    {
-        paranoiaPullYaw = yawOffset;
     }
 
     /// <summary>
