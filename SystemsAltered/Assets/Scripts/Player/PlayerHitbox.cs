@@ -31,5 +31,9 @@ public class PlayerHitbox : MonoBehaviour
             playerHealth.TakeDamage(enemyBullet.damage, other.transform.position);
             Destroy(other.gameObject);
         }
+        else
+        {
+            return;
+        }
     }
 }

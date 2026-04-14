@@ -48,10 +48,10 @@ public class Bullet : MonoBehaviour
         }
     }
 
-    void OnTriggerEnter(Collider other)
+    void OnCollisionEnter(Collision other)
     {
         // Fake enemies: pop effect, destroy fake, bullet continues
-        if (other.CompareTag("FakeEnemy"))
+        if (other.gameObject.CompareTag("FakeEnemy"))
         {
             if (fakeHitPopPrefab != null)
             {
@@ -64,11 +64,11 @@ public class Bullet : MonoBehaviour
         }
 
         // Ignore the player who shot it
-        if (other.CompareTag("Player"))
+        if (other.gameObject.CompareTag("Player"))
             return;
 
         // Real enemies: deal damage
-        var health = other.GetComponentInParent<EnemyHealth>();
+        var health = other.gameObject.GetComponentInParent<EnemyHealth>();
         if (health != null)
         {
             health.TakeDamage(damage);

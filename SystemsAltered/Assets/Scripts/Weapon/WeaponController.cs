@@ -90,8 +90,7 @@ public class WeaponController : MonoBehaviour
         Bullet bullet = bulletObj.GetComponent<Bullet>();
         bullet.speed = bulletSpeed;
 
-        if (currentState != null)
-            bullet.damage = damage;
+        bullet.damage = damage;
 
         bullet.Init(direction);
 
@@ -123,7 +122,7 @@ public class WeaponController : MonoBehaviour
 
     void UpdateHUD()
     {
-        if (hudController != null)
+        if (hudController)
             hudController.SetRealAmmo(currentAmmo);
 
         OnAmmoChanged?.Invoke(currentAmmo, magazineSize);

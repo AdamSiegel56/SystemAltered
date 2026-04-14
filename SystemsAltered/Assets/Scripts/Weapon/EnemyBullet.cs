@@ -16,6 +16,7 @@ public class EnemyBullet : MonoBehaviour
     private Vector3 originPosition;
     private Rigidbody rb;
 
+    // ReSharper disable Unity.PerformanceAnalysis
     public void Init(Vector3 dir)
     {
         originPosition = transform.position;
@@ -42,15 +43,15 @@ public class EnemyBullet : MonoBehaviour
         }
     }
 
-    void OnTriggerEnter(Collider other)
+    void OnCollisionEnter(Collision other)
     {
         // Skip enemies and fake enemies
-        if (other.CompareTag("Enemy") || other.CompareTag("FakeEnemy"))
+        if (other.gameObject.CompareTag("Enemy") || other.gameObject.CompareTag("FakeEnemy"))
             return;
 
         // Find PlayerHealth anywhere in hierarchy
-        var playerHealth = other.GetComponentInParent<PlayerHealth>();
-        if (playerHealth != null)
+        var playerHealth = other.gameObject.GetComponentInParent<PlayerHealth>();
+        if (playerHealth)
         {
             playerHealth.TakeDamage(damage, originPosition);
             Destroy(gameObject);
