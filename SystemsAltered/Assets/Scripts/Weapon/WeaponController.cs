@@ -90,8 +90,7 @@ public class WeaponController : MonoBehaviour
         Bullet bullet = bulletObj.GetComponent<Bullet>();
         bullet.speed = bulletSpeed;
 
-        if (currentState != null)
-            bullet.damage = damage;
+        bullet.damage = damage;
 
         bullet.Init(direction);
 

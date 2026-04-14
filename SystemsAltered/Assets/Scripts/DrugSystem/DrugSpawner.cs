@@ -94,7 +94,7 @@ public class DrugSpawner : MonoBehaviour
     {
         if (drugPickupPrefab == null || weightedPool.Length == 0) return;
 
-        DrugEntry entry = weightedPool[Random.Range(0, weightedPool.Length)];
+        DrugEntry entry = weightedPool[Random.Range(0, weightedPool.Length -1)];
 
         GameObject pickup = Instantiate(drugPickupPrefab, point.position, point.rotation);
 

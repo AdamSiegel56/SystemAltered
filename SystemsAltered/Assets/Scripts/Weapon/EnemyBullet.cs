@@ -42,14 +42,14 @@ public class EnemyBullet : MonoBehaviour
         }
     }
 
-    void OnTriggerEnter(Collider other)
+    void OnCollisionEnter(Collision other)
     {
         // Skip enemies and fake enemies
-        if (other.CompareTag("Enemy") || other.CompareTag("FakeEnemy"))
+        if (other.gameObject.CompareTag("Enemy") || other.gameObject.CompareTag("FakeEnemy"))
             return;
 
         // Find PlayerHealth anywhere in hierarchy
-        var playerHealth = other.GetComponentInParent<PlayerHealth>();
+        var playerHealth = other.gameObject.GetComponentInParent<PlayerHealth>();
         if (playerHealth != null)
         {
             playerHealth.TakeDamage(damage, originPosition);

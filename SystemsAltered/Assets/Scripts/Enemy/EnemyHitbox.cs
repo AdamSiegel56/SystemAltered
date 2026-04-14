@@ -21,11 +21,15 @@ public class EnemyHitbox : MonoBehaviour
 
     void OnTriggerEnter(Collider other)
     {
-        var bullet = other.GetComponent<Bullet>();
-        if (bullet != null && enemyHealth != null)
+        if (other.gameObject.CompareTag("Bullet"))
         {
-            enemyHealth.TakeDamage(bullet.damage);
+            Debug.Log("Hit");
+            enemyHealth.TakeDamage(other.gameObject.GetComponent<Bullet>().damage);
             Destroy(other.gameObject);
+        }
+        else
+        {
+            return;
         }
     }
 }
