@@ -122,7 +122,7 @@ public class WeaponController : MonoBehaviour
 
     void UpdateHUD()
     {
-        if (hudController != null)
+        if (hudController)
             hudController.SetRealAmmo(currentAmmo);
 
         OnAmmoChanged?.Invoke(currentAmmo, magazineSize);

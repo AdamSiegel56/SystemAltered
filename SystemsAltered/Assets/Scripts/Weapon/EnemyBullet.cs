@@ -16,6 +16,7 @@ public class EnemyBullet : MonoBehaviour
     private Vector3 originPosition;
     private Rigidbody rb;
 
+    // ReSharper disable Unity.PerformanceAnalysis
     public void Init(Vector3 dir)
     {
         originPosition = transform.position;
@@ -50,7 +51,7 @@ public class EnemyBullet : MonoBehaviour
 
         // Find PlayerHealth anywhere in hierarchy
         var playerHealth = other.gameObject.GetComponentInParent<PlayerHealth>();
-        if (playerHealth != null)
+        if (playerHealth)
         {
             playerHealth.TakeDamage(damage, originPosition);
             Destroy(gameObject);
