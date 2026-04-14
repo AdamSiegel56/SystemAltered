@@ -8,21 +8,12 @@ using System.Collections.Generic;
 /// </summary>
 public class DrugSpawner : MonoBehaviour
 {
-    [System.Serializable]
-    public class DrugEntry
-    {
-        public DrugStateData state;
-        public Material material;
-        [Tooltip("Higher = more likely to spawn. 1 = normal, 2 = twice as likely.")]
-        public int weight = 1;
-    }
 
     [Header("Spawning")]
-    public GameObject drugPickupPrefab;
     public Transform[] spawnPoints;
 
     [Header("Drug Pool")]
-    public DrugEntry[] drugs;
+    public GameObject[] drugs;
 
     [Header("Timing")]
     public float initialDelay = 1f;
@@ -35,7 +26,6 @@ public class DrugSpawner : MonoBehaviour
 
     private Dictionary<Transform, GameObject> pointToPickup = new Dictionary<Transform, GameObject>();
     private Dictionary<Transform, float> cooldowns = new Dictionary<Transform, float>();
-    private DrugEntry[] weightedPool;
     private float startTime;
 
     void Start()
@@ -47,19 +37,6 @@ public class DrugSpawner : MonoBehaviour
             cooldowns[point] = startTime;
             pointToPickup[point] = null;
         }
-
-        BuildWeightedPool();
-    }
-
-    void BuildWeightedPool()
-    {
-        List<DrugEntry> pool = new List<DrugEntry>();
-        foreach (var entry in drugs)
-        {
-            for (int i = 0; i < Mathf.Max(1, entry.weight); i++)
-                pool.Add(entry);
-        }
-        weightedPool = pool.ToArray();
     }
 
     void Update()
@@ -92,28 +69,11 @@ public class DrugSpawner : MonoBehaviour
 
     void SpawnPickup(Transform point)
     {
-        if (drugPickupPrefab == null || weightedPool.Length == 0) return;
+        GameObject spawnedDrug = drugs[Random.Range(0, drugs.Length)];
+        
+        Instantiate(spawnedDrug.gameObject, point.position, point.rotation);
 
-        DrugEntry entry = weightedPool[Random.Range(0, weightedPool.Length -1)];
-
-        GameObject pickup = Instantiate(drugPickupPrefab, point.position, point.rotation);
-
-        var drugPickup = pickup.GetComponent<DrugPickup>();
-        if (drugPickup != null)
-        {
-            drugPickup.state = entry.state;
-        }
-
-        if (entry.material != null)
-        {
-            var renderer = pickup.GetComponentInChildren<Renderer>();
-            if (renderer != null)
-            {
-                renderer.material = entry.material;
-            }
-        }
-
-        pointToPickup[point] = pickup;
+        pointToPickup[point] = spawnedDrug;
     }
 
     bool IsPointOccupied(Transform point)
