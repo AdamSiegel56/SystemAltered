@@ -1065,25 +1065,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f4ebbaa96a6b5184595047cd91cc07a2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::DrugSpawner
-  drugPickupPrefab: {fileID: 3507060338024605068, guid: 6bbbddb58724fda41aeaaf75e83ad3e8, type: 3}
   spawnPoints:
   - {fileID: 836580456}
   - {fileID: 320446479}
   - {fileID: 442047901}
   - {fileID: 56080036}
   drugs:
-  - state: {fileID: 11400000, guid: 9ded7fa5d1295f64cace00f66193955a, type: 2}
-    material: {fileID: 2100000, guid: f4cdfe9838b54c045ab6ba937ca0cd03, type: 2}
-    weight: 1
-  - state: {fileID: 11400000, guid: d110c79184b0b2b499db360fbd9befbd, type: 2}
-    material: {fileID: 2100000, guid: 1f6edd44843f8d34c84410ca8aa84d2d, type: 2}
-    weight: 1
-  - state: {fileID: 11400000, guid: d9445b77294cd1e4db17feb6319dc999, type: 2}
-    material: {fileID: 2100000, guid: aceb4dbd023763c4db5efc82ee3bf19d, type: 2}
-    weight: 1
-  - state: {fileID: 11400000, guid: d2476006a29ab7f4b868b76a66c51b32, type: 2}
-    material: {fileID: 2100000, guid: 3fc05e9feac539c4dad95afe542f14f4, type: 2}
-    weight: 1
+  - {fileID: 4460007168679550244, guid: 32cad09092f7bdd40bd65622ea5def7f, type: 3}
+  - {fileID: 4431596977667259136, guid: 551212fa1441f864cacc4b468160c488, type: 3}
+  - {fileID: 7026081572047915702, guid: bf95260bee5230a428082a4cd6ffcbb2, type: 3}
+  - {fileID: 388086681346263679, guid: 88aa5e08469243e429cc001f2cb566af, type: 3}
   initialDelay: 1
   respawnDelay: 8
   maxActivePickups: 4
@@ -2305,6 +2296,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::HUDController
   ammoText: {fileID: 383881342}
   drugRenderController: {fileID: 330585550}
+  drugStateController: {fileID: 2015047514}
+  drugProgressBar: {fileID: 2129422970}
 --- !u!114 &263938794
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2383,6 +2376,7 @@ RectTransform:
   - {fileID: 383881341}
   - {fileID: 392861952}
   - {fileID: 1104659570}
+  - {fileID: 1629882574}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
@@ -21315,6 +21309,82 @@ MonoBehaviour:
   m_MinRegionArea: 2
   m_NavMeshData: {fileID: 23800000, guid: 8b8cc43551275ab4d865b2d722913bae, type: 2}
   m_BuildHeightMesh: 0
+--- !u!1 &1629882573
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1629882574}
+  - component: {fileID: 1629882576}
+  - component: {fileID: 1629882575}
+  m_Layer: 5
+  m_Name: DrugBarBG
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!224 &1629882574
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1629882573}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 2129422969}
+  m_Father: {fileID: 263938797}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 120, y: 0}
+  m_SizeDelta: {x: 400, y: 40}
+  m_Pivot: {x: 0, y: -1}
+--- !u!114 &1629882575
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1629882573}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
+  m_Material: {fileID: 0}
+  m_Color: {r: 0.15686275, g: 0.15686275, b: 0.15686275, a: 0.78431374}
+  m_RaycastTarget: 1
+  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
+  m_Maskable: 1
+  m_OnCullStateChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  m_Sprite: {fileID: 0}
+  m_Type: 0
+  m_PreserveAspect: 0
+  m_FillCenter: 1
+  m_FillMethod: 4
+  m_FillAmount: 1
+  m_FillClockwise: 1
+  m_FillOrigin: 0
+  m_UseSpriteMesh: 0
+  m_PixelsPerUnitMultiplier: 1
+--- !u!222 &1629882576
+CanvasRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1629882573}
+  m_CullTransparentMesh: 1
 --- !u!1 &1654492144
 GameObject:
   m_ObjectHideFlags: 0
@@ -23792,6 +23862,81 @@ Transform:
   m_Children: []
   m_Father: {fileID: 191180907}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &2129422968
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 2129422969}
+  - component: {fileID: 2129422971}
+  - component: {fileID: 2129422970}
+  m_Layer: 5
+  m_Name: DrugBarFillImage
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!224 &2129422969
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2129422968}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1629882574}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 1, y: 1}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 0, y: 0}
+  m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &2129422970
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2129422968}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
+  m_Material: {fileID: 0}
+  m_Color: {r: 0, g: 1, b: 0.008451462, a: 1}
+  m_RaycastTarget: 1
+  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
+  m_Maskable: 1
+  m_OnCullStateChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  m_Sprite: {fileID: 21300000, guid: 8ae586f0ad7222a4d9746438a2ea5383, type: 3}
+  m_Type: 3
+  m_PreserveAspect: 0
+  m_FillCenter: 1
+  m_FillMethod: 0
+  m_FillAmount: 1
+  m_FillClockwise: 1
+  m_FillOrigin: 0
+  m_UseSpriteMesh: 0
+  m_PixelsPerUnitMultiplier: 1
+--- !u!222 &2129422971
+CanvasRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2129422968}
+  m_CullTransparentMesh: 1
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0

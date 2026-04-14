@@ -1,5 +1,6 @@
 using UnityEngine;
 using TMPro;
+using UnityEngine.UI;
 
 /// <summary>
 /// Corrupts the HUD based on meth hallucination intensity.
@@ -14,6 +15,10 @@ public class HUDController : MonoBehaviour
 
     [Header("False Damage")]
     public DrugRenderController drugRenderController;
+    
+    [Header("Drug UI")]
+    public DrugStateController drugStateController;
+    public Image drugProgressBar;
 
     private float corruptionLevel;
     private float nextFalseDamageTime;
@@ -31,6 +36,7 @@ public class HUDController : MonoBehaviour
     void Update()
     {
         UpdateAmmoDisplay();
+        UpdateDrugProgressBar();
 
         if (corruptionLevel > 0.2f)
         {
@@ -78,5 +84,32 @@ public class HUDController : MonoBehaviour
         nextFalseDamageTime = Time.time + Random.Range(2f, 6f) / corruptionLevel;
 
         drugRenderController.FlashFalseDamage();
+    }
+    
+    void UpdateDrugProgressBar()
+    {
+        drugProgressBar.gameObject.SetActive(
+            drugStateController.CurrentState != drugStateController.soberState
+        );
+        
+        if (drugProgressBar == null || drugStateController == null)
+            return;
+
+        float progress = drugStateController.NormalizedProgress;
+
+        // Fill decreases over time (feels more like a "timer")
+        drugProgressBar.fillAmount = 1f - progress;
+
+        // OPTIONAL: color shift (green → red as it ends)
+        Color color = Color.Lerp(Color.green, Color.red, progress);
+        drugProgressBar.color = color;
+
+        // OPTIONAL: flicker when corruption is high
+        if (corruptionLevel > 0.7f && Random.value < 0.1f)
+        {
+            drugProgressBar.fillAmount = Random.Range(0f, 1f);
+        }
+        
+        
     }
 }
