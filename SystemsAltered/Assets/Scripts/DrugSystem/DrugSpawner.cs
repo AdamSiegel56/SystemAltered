@@ -44,12 +44,11 @@ public class DrugSpawner : MonoBehaviour
         if (Time.time < startTime) return;
 
         int activeCount = 0;
+
         foreach (var point in spawnPoints)
         {
             if (pointToPickup[point] != null)
                 activeCount++;
-            else
-                pointToPickup[point] = null;
         }
 
         if (activeCount >= maxActivePickups) return;
@@ -69,9 +68,9 @@ public class DrugSpawner : MonoBehaviour
 
     void SpawnPickup(Transform point)
     {
-        GameObject spawnedDrug = drugs[Random.Range(0, drugs.Length)];
+        GameObject newDrug = drugs[Random.Range(0, drugs.Length)];
         
-        Instantiate(spawnedDrug.gameObject, point.position, point.rotation);
+       GameObject spawnedDrug = Instantiate(newDrug.gameObject, point.position, point.rotation);
 
         pointToPickup[point] = spawnedDrug;
     }
