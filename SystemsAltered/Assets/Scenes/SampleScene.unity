@@ -7927,6 +7927,7 @@ Transform:
   m_Children:
   - {fileID: 757342242}
   - {fileID: 290455536}
+  - {fileID: 640352025}
   m_Father: {fileID: 1288073089}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &330585547
@@ -10858,6 +10859,83 @@ Mesh:
       - serializedVersion: 1
         m_IndexStart: 0
         m_IndexCount: 0
+--- !u!1001 &640352024
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 330585546}
+    m_Modifications:
+    - target: {fileID: -8679921383154817045, guid: c7f6c4a807fb67f428290ab7c565c5a3, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 0.11680693
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: c7f6c4a807fb67f428290ab7c565c5a3, type: 3}
+      propertyPath: m_LocalScale.y
+      value: 0.116806924
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: c7f6c4a807fb67f428290ab7c565c5a3, type: 3}
+      propertyPath: m_LocalScale.z
+      value: 0.11680693
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: c7f6c4a807fb67f428290ab7c565c5a3, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0.58575
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: c7f6c4a807fb67f428290ab7c565c5a3, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: -0.24908999
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: c7f6c4a807fb67f428290ab7c565c5a3, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0.86403996
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: c7f6c4a807fb67f428290ab7c565c5a3, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 0.6801654
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: c7f6c4a807fb67f428290ab7c565c5a3, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: c7f6c4a807fb67f428290ab7c565c5a3, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0.73305863
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: c7f6c4a807fb67f428290ab7c565c5a3, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: c7f6c4a807fb67f428290ab7c565c5a3, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: c7f6c4a807fb67f428290ab7c565c5a3, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 94.287
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: c7f6c4a807fb67f428290ab7c565c5a3, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: c7f6c4a807fb67f428290ab7c565c5a3, type: 3}
+      propertyPath: m_Name
+      value: Sig P365 XL
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects:
+    - {fileID: -8700617353114198275, guid: c7f6c4a807fb67f428290ab7c565c5a3, type: 3}
+    - {fileID: 65702495048144492, guid: c7f6c4a807fb67f428290ab7c565c5a3, type: 3}
+    - {fileID: 8821623529969584324, guid: c7f6c4a807fb67f428290ab7c565c5a3, type: 3}
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: c7f6c4a807fb67f428290ab7c565c5a3, type: 3}
+--- !u!4 &640352025 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: c7f6c4a807fb67f428290ab7c565c5a3, type: 3}
+  m_PrefabInstance: {fileID: 640352024}
+  m_PrefabAsset: {fileID: 0}
 --- !u!43 &714652592
 Mesh:
   m_ObjectHideFlags: 0
@@ -23411,7 +23489,7 @@ MonoBehaviour:
   playerHeight: 2
   layer:
     serializedVersion: 2
-    m_Bits: 64
+    m_Bits: 320
 --- !u!114 &2015047514
 MonoBehaviour:
   m_ObjectHideFlags: 0
