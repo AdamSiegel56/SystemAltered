@@ -1,31 +1,59 @@
+using System.Net.Http.Headers;
 using UnityEngine;
 using KinematicCharacterController;
+
+public enum CrouchInput
+{
+    None, 
+    Toggle
+}
+
+public enum Stance
+{
+    Stand,
+    Crouch
+}
 
 public struct CharacterInput
 {
     public Quaternion Rotation;
     public Vector2 Move;
     public bool Jump;
+    public CrouchInput Crouch;
 }
 
 public class PlayerCharacter : MonoBehaviour, ICharacterController
 {
     [SerializeField] private KinematicCharacterMotor motor;
+    [SerializeField] private Transform root;
     [SerializeField] private Transform cameraTarget;
     [Space]
     
     [SerializeField] private float walkSpeed = 20.0f;
+    [SerializeField] private float crouchSpeed = 7.0f;
     [Space]
     
     [SerializeField] private float jumpSpeed = 20.0f;
     [SerializeField] private float gravity = -90.0f;
+    [Space]
+    
+    [SerializeField] private float standHeight = 2.0f;
+    [SerializeField] private float crouchHeight = 1.0f;
+    [Range(0f, 1f)]
+    [SerializeField] private float standCamTargetHeight = 0.9f;
+    [Range(0f, 1f)]
+    [SerializeField] private float crouchCamTargetHeight = 0.7f;
+    
+    private Stance _stance;
     
     private Quaternion requestedRotation;
     private Vector3 requestedMovement;
     private bool requestedJump;
+    private bool requestedCrouch;
     
     public void Initialize()
     {
+        _stance = Stance.Stand;
         motor.CharacterController = this;
     }
 
@@ -38,6 +66,27 @@ public class PlayerCharacter : MonoBehaviour, ICharacterController
         requestedMovement = input.Rotation * requestedMovement;
         
         requestedJump = requestedJump || input.Jump;
+        requestedCrouch = input.Crouch switch
+        {
+            CrouchInput.Toggle => !requestedCrouch,
+            CrouchInput.None => requestedCrouch,
+        };
+    }
+
+    public void UpdateBody()
+    {
+        var currentHeight = motor.Capsule.height;
+        var normalizedHeight = currentHeight / standHeight;
+        var camTargetHeight = currentHeight *
+        (
+            _stance == Stance.Stand 
+                ? standCamTargetHeight 
+                : crouchCamTargetHeight
+        );
+        var rootTargetScale = new Vector3(1f, normalizedHeight, 1f);
+        
+        cameraTarget.localPosition = new Vector3(0f, camTargetHeight, 0f);
+        root.localScale = rootTargetScale;
     }
     
 
@@ -63,8 +112,12 @@ public class PlayerCharacter : MonoBehaviour, ICharacterController
                 direction: requestedMovement,
                 surfaceNormal: motor.GroundingStatus.GroundNormal
             );
+            
+            var speed =_stance == Stance.Stand 
+                ? walkSpeed 
+                : crouchSpeed;
         
-            currentVelocity = groundMovement * walkSpeed;
+            currentVelocity = groundMovement * speed;
         }
         else
         {
@@ -78,12 +131,26 @@ public class PlayerCharacter : MonoBehaviour, ICharacterController
 
             motor.ForceUnground(0.0f);
             
-            currentVelocity += motor.CharacterUp * jumpSpeed;
+            var currentVerticalSpeed = Vector3.Dot(currentVelocity, motor.CharacterUp);
+            var targetVerticalSpeed = Mathf.Max(currentVerticalSpeed, jumpSpeed);
+            
+            currentVelocity += motor.CharacterUp * (targetVerticalSpeed - currentVerticalSpeed);
         }
     }
 
     public void BeforeCharacterUpdate(float deltaTime)
     {
+        // Crouch
+        if (requestedCrouch && _stance == Stance.Stand)
+        {
+            _stance = Stance.Crouch;
+            motor.SetCapsuleDimensions
+                (
+                    radius: motor.Capsule.radius,
+                    height: crouchHeight,
+                    yOffset: crouchHeight * 0.5f
+                );
+        }
     }
 
     public void PostGroundingUpdate(float deltaTime)
@@ -92,6 +159,17 @@ public class PlayerCharacter : MonoBehaviour, ICharacterController
 
     public void AfterCharacterUpdate(float deltaTime)
     {
+        // Uncrouch
+        if (!requestedCrouch && _stance is not Stance.Stand)
+        {
+            _stance = Stance.Stand;
+            motor.SetCapsuleDimensions
+            (
+                radius: motor.Capsule.radius,
+                height: standHeight,
+                yOffset: standHeight * 0.5f
+            );
+        }
     }
 
     public bool IsColliderValidForCollisions(Collider coll)

@@ -5,6 +5,7 @@ public class Player : MonoBehaviour
 {
     [SerializeField] private PlayerCharacter playerCharacter;
     [SerializeField] private PlayerCam playerCam;
+    [SerializeField] private Gun gun;
     
     private PlayerInputActions _inputActions;
 
@@ -16,6 +17,7 @@ public class Player : MonoBehaviour
         
         playerCharacter.Initialize();
         playerCam.Initialize(playerCharacter.GetCameraTarget());
+        gun.Initialize();
     }
 
     void OnDestroy()
@@ -37,8 +39,20 @@ public class Player : MonoBehaviour
         {
             Rotation = playerCam.transform.rotation,
             Move = input.Move.ReadValue<Vector2>(),
-            Jump = input.Jump.WasPressedThisFrame()
+            Jump = input.Jump.WasPressedThisFrame(),
+            Crouch = input.Crouch.WasPressedThisFrame()
+            ? CrouchInput.Toggle
+            : CrouchInput.None
         };
         playerCharacter.UpdateInput(characterInput);
+        playerCharacter.UpdateBody();
+
+        var gunInput = new GunInput
+        {
+            Shoot = input.Shoot.IsPressed(),
+            Reload = input.Reload.WasPressedThisFrame()
+        };
+
+        gun.UpdateInput(gunInput);
     }
 }
