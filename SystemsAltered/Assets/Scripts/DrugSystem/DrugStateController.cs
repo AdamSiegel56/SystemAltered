@@ -12,7 +12,7 @@ public class DrugStateController : MonoBehaviour
     private DrugStateData currentState;
     private float timer;
     private float stateStartTime;
-
+    
     /// <summary>
     /// Normalized progress through the current drug (0 = just taken, 1 = about to expire).
     /// Used by escalation systems (e.g. meth hallucination ramp).
@@ -46,6 +46,8 @@ public class DrugStateController : MonoBehaviour
     void Start()
     {
         SetState(startingState != null ? startingState : soberState);
+        
+        
     }
 
     void Update()
@@ -67,6 +69,8 @@ public class DrugStateController : MonoBehaviour
         timer = newState.duration;
         stateStartTime = Time.time;
 
+        
+        
         if (newState.stateType ==  DrugState.THC)
         {
             WeedParticle();
