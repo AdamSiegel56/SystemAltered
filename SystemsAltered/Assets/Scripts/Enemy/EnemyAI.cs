@@ -26,10 +26,12 @@ public class EnemyAI:MonoBehaviour
     // States
     public float sightRange, attackRange;
     public bool playerInSightRange, playerInAttackRange;
+    
+    [SerializeField] private GameObject hitEffect;
 
     void Awake()
     {
-        player = GameObject.Find("PlayerHolder").transform;
+        player = GameObject.Find("Player").transform;
         agent = GetComponent<NavMeshAgent>();
     }
 
@@ -39,12 +41,12 @@ public class EnemyAI:MonoBehaviour
         playerInSightRange = Physics.CheckSphere(transform.position, sightRange, whatIsPlayer);
         playerInAttackRange = Physics.CheckSphere(transform.position, attackRange, whatIsPlayer);
         
-        if(!playerInSightRange && !playerInAttackRange) Patroling();
+        if(!playerInSightRange && !playerInAttackRange) Patrolling();
         if (playerInSightRange && !playerInAttackRange) ChasePlayer();
         if(playerInAttackRange && playerInSightRange) AttackPlayer();
     }
     
-    private void Patroling()
+    private void Patrolling()
     {
         if (!walkPointSet) SearchWalkPoint();
 
@@ -53,7 +55,7 @@ public class EnemyAI:MonoBehaviour
             
         Vector3 distanceToWalkPoint = transform.position - walkPoint;
             
-        // Walkpoint Reached
+        // Walk Point Reached
         if(distanceToWalkPoint.magnitude < 1f)
             walkPointSet = false;
     }
@@ -99,8 +101,9 @@ public class EnemyAI:MonoBehaviour
         alreadyAttacked = false;
     }
 
-    public void TakeDamage(int damage)
+    public void TakeDamage(float damage, Vector3 hitPos, Vector3 hitNormal)
     {
+        Instantiate(hitEffect, hitPos, Quaternion.LookRotation(hitNormal));
         health -= damage;
         
         if (health <= 0)
