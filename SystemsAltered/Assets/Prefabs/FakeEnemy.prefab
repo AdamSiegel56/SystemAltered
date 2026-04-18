@@ -245,7 +245,7 @@ NavMeshAgent:
   m_AutoBraking: 1
   m_AutoRepath: 1
   m_Height: 2
-  m_BaseOffset: 0
+  m_BaseOffset: -1
   m_WalkableMask: 4294967295
   m_ObstacleAvoidanceType: 4
 --- !u!114 &2385505644335906142
@@ -268,7 +268,7 @@ MonoBehaviour:
   chargeStopDistance: 2
   groundRayOriginHeight: 3
   groundRayDistance: 6
-  groundYOffset: -1
+  groundYOffset: 0
   groundMask:
     serializedVersion: 2
     m_Bits: 64
