@@ -1,9 +1,11 @@
+using System.Collections;
+using DG.Tweening;
 using UnityEngine;
 
 public class DrugWorldSwap : MonoBehaviour
 {
-    
-    
+
+    public float maxInt;
     
     [SerializeField] private string lightWorld = "LightWorld";
     private int lwIndex;
@@ -15,6 +17,9 @@ public class DrugWorldSwap : MonoBehaviour
     {
         lwIndex = LayerMask.NameToLayer(lightWorld);
         dwIndex = LayerMask.NameToLayer(darkWorld);
+        TransferWorlds(false);
+        Camera.main.cullingMask = ~(1 << dwIndex);
+
     }
     void OnEnable()
     {
@@ -41,6 +46,7 @@ public class DrugWorldSwap : MonoBehaviour
             foreach (GameObject go in allObjects) {
                 if (go.layer == lwIndex) {
                     go.SetActive(false);
+                    
                 }
             }
             foreach (GameObject go in allObjects) {
@@ -71,16 +77,18 @@ public class DrugWorldSwap : MonoBehaviour
         {
             case (DrugState.Sober):
                 Camera.main.cullingMask = ~(1 << dwIndex);
+                FadeOut();
                 TransferWorlds(false);
-
                 break;
             case(DrugState.Cocaine):
                 Camera.main.cullingMask = ~(1 << lwIndex);
                 TransferWorlds(true);
+                FadeIn();
                 break;
             case(DrugState.THC):
                 Camera.main.cullingMask = ~(1 << lwIndex);
                 TransferWorlds(true);
+                FadeIn();
                 Debug.Log("TESTINGLW");
                 break;
             case(DrugState.Steroids):
@@ -100,5 +108,20 @@ public class DrugWorldSwap : MonoBehaviour
                 break;
         }
     }
-    
+    [SerializeField] private Material fullScreenMaterial; 
+
+    private void FadeIn(float duration = 1f) => StartCoroutine(FadeRoutine(0f, maxInt, duration));
+    private void FadeOut(float duration = 1f) => StartCoroutine(FadeRoutine(maxInt, 0f, duration));
+
+    private IEnumerator FadeRoutine(float from, float to, float duration)
+    {
+        float elapsed = 0f;
+        while (elapsed < duration)
+        {
+            elapsed += Time.deltaTime;
+            fullScreenMaterial.SetFloat("_Progress", Mathf.Lerp(from, to, elapsed / duration));
+            yield return null;
+        }
+        fullScreenMaterial.SetFloat("_Progress", to);
+    }
 }

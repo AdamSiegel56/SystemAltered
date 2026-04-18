@@ -718,7 +718,7 @@
     "m_ObjectId": "3739566662b84b9e94943fd56fe69e51",
     "m_Title": "VIGNETTE",
     "m_Position": {
-        "x": -2167.0,
+        "x": -2166.999755859375,
         "y": 333.0000915527344
     }
 }
@@ -993,7 +993,7 @@
     "m_ObjectId": "5d4845d368e64ee592ea36a5300c6c04",
     "m_Title": "noise",
     "m_Position": {
-        "x": -1655.0,
+        "x": -1654.9998779296875,
         "y": -653.9999389648438
     }
 }
@@ -1009,7 +1009,7 @@
     "m_Type": "UnityEditor.ShaderGraph.Vector1MaterialSlot",
     "m_ObjectId": "6a7e7b5c87614e2790324b24ef2b31e1",
     "m_Id": 0,
-    "m_DisplayName": "Transparency",
+    "m_DisplayName": "Progress",
     "m_SlotType": 1,
     "m_Hidden": false,
     "m_ShaderOutputName": "Out",
@@ -1797,10 +1797,10 @@
     "m_Guid": {
         "m_GuidSerialized": "4f4e601a-ed1d-442f-9cf6-31d289c45836"
     },
-    "m_Name": "Transparency",
+    "m_Name": "Progress",
     "m_DefaultRefNameVersion": 1,
-    "m_RefNameGeneratedByDisplayName": "Transparency",
-    "m_DefaultReferenceName": "_Transparency",
+    "m_RefNameGeneratedByDisplayName": "Progress",
+    "m_DefaultReferenceName": "_Progress",
     "m_OverrideReferenceName": "",
     "m_GeneratePropertyBlock": true,
     "m_UseCustomSlotLabel": false,

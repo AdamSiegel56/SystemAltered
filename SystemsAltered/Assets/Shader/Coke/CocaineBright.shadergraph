@@ -5,6 +5,9 @@
     "m_Properties": [
         {
             "m_Id": "fc7a54ab4f3242b5af27df8ea720e021"
+        },
+        {
+            "m_Id": "964b470990e64d2a8bd51981898d63a1"
         }
     ],
     "m_Keywords": [],
@@ -761,6 +764,46 @@
 }
 
 {
+    "m_SGVersion": 1,
+    "m_Type": "UnityEditor.ShaderGraph.Internal.Vector1ShaderProperty",
+    "m_ObjectId": "964b470990e64d2a8bd51981898d63a1",
+    "m_Guid": {
+        "m_GuidSerialized": "60fddd3d-f3eb-41c2-b32e-84323115b468"
+    },
+    "m_Name": "Progress",
+    "m_DefaultRefNameVersion": 1,
+    "m_RefNameGeneratedByDisplayName": "Progress",
+    "m_DefaultReferenceName": "_Progress",
+    "m_OverrideReferenceName": "",
+    "m_GeneratePropertyBlock": true,
+    "m_UseCustomSlotLabel": false,
+    "m_CustomSlotLabel": "",
+    "m_DismissedVersion": 0,
+    "m_Precision": 0,
+    "overrideHLSLDeclaration": false,
+    "hlslDeclarationOverride": 0,
+    "m_Hidden": false,
+    "m_PerRendererData": false,
+    "m_customAttributes": [],
+    "m_Value": 0.0,
+    "m_FloatType": 0,
+    "m_RangeValues": {
+        "x": 0.0,
+        "y": 1.0
+    },
+    "m_SliderType": 0,
+    "m_SliderPower": 3.0,
+    "m_EnumType": 0,
+    "m_CSharpEnumString": "",
+    "m_EnumNames": [
+        "Default"
+    ],
+    "m_EnumValues": [
+        0
+    ]
+}
+
+{
     "m_SGVersion": 0,
     "m_Type": "UnityEditor.ShaderGraph.DynamicValueMaterialSlot",
     "m_ObjectId": "9d08fdb336524633b70eb29ada9abe7e",
@@ -837,6 +880,9 @@
     "m_ChildObjectList": [
         {
             "m_Id": "fc7a54ab4f3242b5af27df8ea720e021"
+        },
+        {
+            "m_Id": "964b470990e64d2a8bd51981898d63a1"
         }
     ]
 }
