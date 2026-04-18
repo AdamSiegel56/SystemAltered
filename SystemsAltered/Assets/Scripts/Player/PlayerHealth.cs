@@ -12,7 +12,7 @@ public class PlayerHealth : MonoBehaviour
     public float currentHealth;
 
     [Header("References")]
-    public RagePullSystem ragePullSystem;
+    // public RagePullSystem ragePullSystem;
     public DrugRenderController drugRenderController;
 
     [Header("Player Health Bar (Screen Space)")]
@@ -39,8 +39,8 @@ public class PlayerHealth : MonoBehaviour
         UpdateHealthBar();
         OnHealthChanged?.Invoke(currentHealth / maxHealth);
 
-        if (ragePullSystem != null)
-            ragePullSystem.OnDamageTaken(sourcePosition);
+       // if (ragePullSystem != null)
+           // ragePullSystem.OnDamageTaken(sourcePosition);
 
         if (drugRenderController != null)
             drugRenderController.FlashDamage();
