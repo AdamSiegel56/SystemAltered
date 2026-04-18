@@ -74,6 +74,6 @@ public class PlayerHealth : MonoBehaviour
     void Die()
     {
         OnPlayerDied?.Invoke();
-        SceneManager.LoadScene("SampleScene");
+        SceneManager.LoadScene(SceneManager.GetActiveScene().name);
     }
 }

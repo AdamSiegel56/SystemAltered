@@ -7,6 +7,7 @@ TagManager:
   - FakeEnemy
   - Enemy
   - Bullet
+  - DrugState
   layers:
   - Default
   - TransparentFX
@@ -19,8 +20,8 @@ TagManager:
   - Obstacle
   - EnemyBullet
   - PlayerBullet
-  - 
-  - 
+  - LightWorld
+  - DarkWorld
   - 
   - 
   - 

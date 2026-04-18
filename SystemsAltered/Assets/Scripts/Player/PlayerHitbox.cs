@@ -31,6 +31,13 @@ public class PlayerHitbox : MonoBehaviour
             playerHealth.TakeDamage(enemyBullet.damage, other.transform.position);
             Destroy(other.gameObject);
         }
+
+        var deadZone = other.GetComponent<FallOutOfBounds>();
+        if (deadZone != null && playerHealth != null)
+        {
+            playerHealth.TakeDamage(200, Vector3.zero);
+        }
+        
         else
         {
             return;

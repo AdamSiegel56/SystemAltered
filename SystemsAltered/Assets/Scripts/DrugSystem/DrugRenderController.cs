@@ -44,7 +44,7 @@ public class DrugRenderController : MonoBehaviour
             StopCoroutine(flashRoutine);
             flashRoutine = null;
         }
-
+        
         if (cameraData != null)
         {
             cameraData.SetRenderer(currentDrugRendererIndex);

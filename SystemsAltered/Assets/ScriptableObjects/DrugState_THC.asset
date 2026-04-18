@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: DrugState_THC
   m_EditorClassIdentifier: Assembly-CSharp::DrugStateData
   stateType: 3
-  duration: 8
+  duration: 25
   hasCrash: 1
   crashState: {fileID: 11400000, guid: 389a62c704ea653478e3104c980976ed, type: 2}
   moveSpeed: 8

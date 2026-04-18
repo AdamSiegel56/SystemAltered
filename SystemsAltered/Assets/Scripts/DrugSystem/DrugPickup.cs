@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 
 public class DrugPickup : MonoBehaviour
@@ -13,5 +14,10 @@ public class DrugPickup : MonoBehaviour
             controller.SetState(state);
             Destroy(gameObject);
         }
+    }
+
+    private void FixedUpdate()
+    {
+        gameObject.transform.Rotate(3,3,3);
     }
 }
