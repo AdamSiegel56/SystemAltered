@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.AI;
 using System.Collections.Generic;
 
 /// <summary>
@@ -9,125 +10,138 @@ using System.Collections.Generic;
 public class HallucinationEscalation : MonoBehaviour
 {
     [Header("References")]
-    public DrugStateController stateController;
-    public HUDController hudController;
-    public FakeEnemySpawner fakeEnemySpawner;
+    [SerializeField] private DrugStateController drugState;
+    [SerializeField] private HUDController hudController;
+    [SerializeField] private EnemySpawner enemySpawner;
 
     [Header("Geometry Fracture")]
-    public Material fractureMaterial;
-    private static readonly int FractureIntensity = Shader.PropertyToID("_FractureIntensity");
+    [SerializeField] private Material fractureMaterial;
 
     [Header("Floor Crack Decals")]
-    public GameObject floorCrackDecalPrefab;
+    [SerializeField] private GameObject floorCrackDecalPrefab;
     [Tooltip("Decals spawn randomly within this radius around the player")]
-    public float decalSpawnRadius = 8f;
+    [SerializeField] private float decalSpawnRadius = 8f;
     [Tooltip("Max active decals at once")]
-    public int maxDecals = 6;
-    public LayerMask floorMask;
+    [SerializeField] private int maxDecals = 6;
+    [Tooltip("How far from the random point to search the NavMesh for a valid spawn")]
+    [SerializeField] private float navMeshSampleDistance = 2f;
 
-    private DrugStateData currentState;
-    private bool isEscalating;
-    private float lastDecalSpawnIntensity;
-    private List<GameObject> activeDecals = new List<GameObject>();
+    [Header("Tuning")]
+    [Tooltip("Fake enemy spawn rate scales by (1 + intensity * this)")]
+    [SerializeField] private float spawnRateScale = 3f;
+    [Tooltip("Minimum intensity delta between decal spawns")]
+    [SerializeField] private float decalSpawnCooldown = 0.1f;
 
-    void OnEnable()
+    private static readonly int FractureIntensityId = Shader.PropertyToID("_FractureIntensity");
+
+    private float _lastDecalSpawnIntensity;
+    private readonly List<GameObject> _activeDecals = new();
+    private DrugStateData _lastAppliedState;
+
+    private DrugStateData State => drugState != null ? drugState.CurrentState : null;
+    private bool IsEscalating => State != null && State.escalatingHallucinations;
+    private float Intensity => drugState != null ? drugState.HallucinationIntensity : 0f;
+
+    // --- Lifecycle ---
+
+    private void Update()
     {
-        DrugEventBus.OnDrugStateChanged += ApplyState;
+        HandleStateChange();
+        if (!IsEscalating) return;
+
+        var intensity = Intensity;
+        ApplyFakeEnemyRate(intensity);
+        ApplyHudCorruption(intensity);
+        ApplyGeometryFracture(intensity);
+        TrySpawnDecal(intensity);
     }
 
-    void OnDisable()
+    private void HandleStateChange()
     {
-        DrugEventBus.OnDrugStateChanged -= ApplyState;
+        var current = State;
+        if (current == _lastAppliedState) return;
+
+        _lastAppliedState = current;
+        _lastDecalSpawnIntensity = 0f;
+
+        if (!IsEscalating)
+            ResetEffects();
     }
 
-    void ApplyState(DrugStateData state)
+    // --- Reset ---
+
+    private void ResetEffects()
     {
-        currentState = state;
-        isEscalating = state.escalatingHallucinations;
-        lastDecalSpawnIntensity = 0f;
+        if (hudController != null) hudController.SetCorruptionLevel(0f);
+        if (fractureMaterial != null) fractureMaterial.SetFloat(FractureIntensityId, 0f);
+        if (enemySpawner != null) enemySpawner.SetSpawnMultiplier(1f);
 
-        if (!isEscalating)
-        {
-            if (hudController != null) hudController.SetCorruptionLevel(0f);
-            if (fractureMaterial != null) fractureMaterial.SetFloat(FractureIntensity, 0f);
-            if (fakeEnemySpawner != null) fakeEnemySpawner.SetSpawnMultiplier(1f);
-
-            // Clean up decals when drug wears off
-            foreach (var decal in activeDecals)
-            {
-                if (decal != null) Destroy(decal);
-            }
-            activeDecals.Clear();
-        }
+        foreach (var decal in _activeDecals)
+            if (decal != null) Destroy(decal);
+        _activeDecals.Clear();
     }
 
-    void Update()
+    // --- Effects ---
+
+    private void ApplyFakeEnemyRate(float intensity)
     {
-        if (!isEscalating || currentState == null || stateController == null) return;
-
-        float intensity = stateController.HallucinationIntensity;
-
-        if (fakeEnemySpawner != null)
-        {
-            fakeEnemySpawner.SetSpawnMultiplier(1f + intensity * 3f);
-        }
-
-        if (hudController != null)
-        {
-            float hudCorruption = 0f;
-            if (intensity > currentState.hudCorruptionThreshold)
-            {
-                float t = (intensity - currentState.hudCorruptionThreshold)
-                          / (1f - currentState.hudCorruptionThreshold);
-                hudCorruption = Mathf.Clamp01(t);
-            }
-            hudController.SetCorruptionLevel(hudCorruption);
-        }
-
-        if (fractureMaterial != null)
-        {
-            float fracture = 0f;
-            if (intensity > currentState.geometryFractureThreshold)
-            {
-                float t = (intensity - currentState.geometryFractureThreshold)
-                          / (1f - currentState.geometryFractureThreshold);
-                fracture = Mathf.Clamp01(t);
-            }
-            fractureMaterial.SetFloat(FractureIntensity, fracture);
-        }
-
-        // Spawn floor crack decals at random positions around the player
-        activeDecals.RemoveAll(d => d == null);
-
-        if (intensity > currentState.geometryFractureThreshold
-            && intensity - lastDecalSpawnIntensity > 0.1f
-            && floorCrackDecalPrefab != null
-            && activeDecals.Count < maxDecals)
-        {
-            SpawnFloorCrack();
-            lastDecalSpawnIntensity = intensity;
-        }
+        if (enemySpawner == null) return;
+        enemySpawner.SetSpawnMultiplier(1f + intensity * spawnRateScale);
     }
 
-    void SpawnFloorCrack()
+    private void ApplyHudCorruption(float intensity)
     {
-        // Pick a random point on the floor near the player
-        Vector2 randomCircle = Random.insideUnitCircle * decalSpawnRadius;
-        Vector3 origin = transform.position + new Vector3(randomCircle.x, 5f, randomCircle.y);
+        if (hudController == null) return;
+        hudController.SetCorruptionLevel(RemapAboveThreshold(intensity, State.hudCorruptionThreshold));
+    }
 
-        // Raycast down to find the floor
-        if (Physics.Raycast(origin, Vector3.down, out RaycastHit hit, 10f, floorMask))
-        {
-            // Spawn slightly above floor to avoid z-fighting
-            Vector3 spawnPos = hit.point + hit.normal * 0.01f;
-            Quaternion spawnRot = Quaternion.LookRotation(hit.normal) * Quaternion.Euler(90f, Random.Range(0f, 360f), 0f);
+    private void ApplyGeometryFracture(float intensity)
+    {
+        if (fractureMaterial == null) return;
+        fractureMaterial.SetFloat(
+            FractureIntensityId,
+            RemapAboveThreshold(intensity, State.geometryFractureThreshold)
+        );
+    }
 
-            GameObject crack = Instantiate(floorCrackDecalPrefab, spawnPos, spawnRot);
-            activeDecals.Add(crack);
+    private static float RemapAboveThreshold(float intensity, float threshold)
+    {
+        if (intensity <= threshold) return 0f;
+        return Mathf.Clamp01((intensity - threshold) / (1f - threshold));
+    }
 
-            // Auto-destroy when drug wears off
-            float remaining = currentState.duration * (1f - stateController.NormalizedProgress) + 1f;
-            Destroy(crack, remaining);
-        }
+    // --- Decals ---
+
+    private void TrySpawnDecal(float intensity)
+    {
+        _activeDecals.RemoveAll(d => d == null);
+
+        if (floorCrackDecalPrefab == null) return;
+        if (_activeDecals.Count >= maxDecals) return;
+        if (intensity <= State.geometryFractureThreshold) return;
+        if (intensity - _lastDecalSpawnIntensity < decalSpawnCooldown) return;
+
+        SpawnFloorCrack();
+        _lastDecalSpawnIntensity = intensity;
+    }
+
+    private void SpawnFloorCrack()
+    {
+        // Pick a random point in a circle around the player, snap to NavMesh
+        var randomCircle = Random.insideUnitCircle * decalSpawnRadius;
+        var candidate = transform.position + new Vector3(randomCircle.x, 0f, randomCircle.y);
+
+        if (!NavMesh.SamplePosition(candidate, out NavMeshHit hit, navMeshSampleDistance, NavMesh.AllAreas))
+            return;
+
+        var spawnPos = hit.position + Vector3.up * 0.01f;
+        var spawnRot = Quaternion.Euler(90f, Random.Range(0f, 360f), 0f);
+
+        var crack = Instantiate(floorCrackDecalPrefab, spawnPos, spawnRot);
+        _activeDecals.Add(crack);
+
+        // Auto-destroy when the drug would wear off
+        var remaining = State.duration * (1f - drugState.NormalizedProgress) + 1f;
+        Destroy(crack, remaining);
     }
 }

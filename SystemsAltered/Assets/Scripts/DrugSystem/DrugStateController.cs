@@ -2,27 +2,34 @@ using UnityEngine;
 
 public class DrugStateController : MonoBehaviour
 {
-    public DrugStateData startingState;
-    public DrugStateData soberState;
+    [Header("States")]
+    [SerializeField] private DrugStateData startingState;
+    [SerializeField] private DrugStateData soberState;
 
+    [Header("THC Particle")]
+    [SerializeField] private GameObject particleWeed;
+    [SerializeField] private Transform particleLoc;
+    [SerializeField] private float particleLifetime = 8f;
 
-    public GameObject particleWeed;
-    public Transform particleLoc;
-    
-    private DrugStateData currentState;
-    private float timer;
-    private float stateStartTime;
-    
+    private DrugStateData _currentState;
+    private float _timer;
+    private float _stateStartTime;
+
+    // --- Public accessors ---
+
+    public DrugStateData CurrentState => _currentState;
+    public DrugStateData SoberState => soberState;
+    public bool IsSober => _currentState == soberState;
+
     /// <summary>
     /// Normalized progress through the current drug (0 = just taken, 1 = about to expire).
-    /// Used by escalation systems (e.g. meth hallucination ramp).
     /// </summary>
     public float NormalizedProgress
     {
         get
         {
-            if (currentState == null || currentState.duration <= 0f) return 0f;
-            return Mathf.Clamp01((Time.time - stateStartTime) / currentState.duration);
+            if (_currentState == null || _currentState.duration <= 0f) return 0f;
+            return Mathf.Clamp01((Time.time - _stateStartTime) / _currentState.duration);
         }
     }
 
@@ -34,55 +41,69 @@ public class DrugStateController : MonoBehaviour
     {
         get
         {
-            if (currentState == null) return 0f;
-            if (currentState.escalatingHallucinations) return NormalizedProgress;
-            if (currentState.spawnFakeEnemies) return 1f;
+            if (_currentState == null) return 0f;
+            if (_currentState.escalatingHallucinations) return NormalizedProgress;
+            if (_currentState.spawnFakeEnemies) return 1f;
             return 0f;
         }
     }
 
-    public DrugStateData CurrentState => currentState;
+    // --- Lifecycle ---
 
-    void Start()
+    private void Start()
     {
         SetState(startingState != null ? startingState : soberState);
-        
-        
     }
 
-    void Update()
+    private void Update()
     {
-        timer -= Time.deltaTime;
-
-        if (timer <= 0)
-        {
-            if (currentState.hasCrash && currentState.crashState != null)
-                SetState(currentState.crashState);
-            else
-                SetState(soberState);
-        }
+        TickTimer();
     }
+
+    private void TickTimer()
+    {
+        _timer -= Time.deltaTime;
+        if (_timer > 0f) return;
+
+        SetState(GetNextState());
+    }
+
+    private DrugStateData GetNextState()
+    {
+        if (_currentState != null && _currentState.hasCrash && _currentState.crashState != null)
+            return _currentState.crashState;
+
+        return soberState;
+    }
+
+    // --- State transitions ---
 
     public void SetState(DrugStateData newState)
     {
-        currentState = newState;
-        timer = newState.duration;
-        stateStartTime = Time.time;
+        if (newState == null) return;
 
-        
-        
-        if (newState.stateType ==  DrugState.THC)
-        {
-            WeedParticle();
-        }
+        _currentState = newState;
+        _timer = newState.duration;
+        _stateStartTime = Time.time;
+
+        HandleStateEffects(newState);
 
         DrugEventBus.OnDrugStateChanged?.Invoke(newState);
     }
 
-    private void WeedParticle()
+    private void HandleStateEffects(DrugStateData state)
     {
-        GameObject newParticle = Instantiate(particleWeed, particleLoc);
-        Destroy(newParticle, 8f);
+        if (state.stateType == DrugState.THC)
+            SpawnWeedParticle();
     }
 
+    // --- Effects ---
+
+    private void SpawnWeedParticle()
+    {
+        if (particleWeed == null || particleLoc == null) return;
+
+        var newParticle = Instantiate(particleWeed, particleLoc);
+        Destroy(newParticle, particleLifetime);
+    }
 }

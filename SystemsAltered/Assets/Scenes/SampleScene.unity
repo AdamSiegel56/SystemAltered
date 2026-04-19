@@ -302,78 +302,12 @@ MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 2435563151005594078, guid: d12583abe92da8242aab31f86ed90991, type: 3}
   m_PrefabInstance: {fileID: 6942915600404553313}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
+  m_GameObject: {fileID: 6942915600404553314}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 2778a6d2c83f82f4d96f2c719b7012b1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::DrugRenderController
---- !u!1001 &47174076
-PrefabInstance:
-  m_ObjectHideFlags: 0
-  serializedVersion: 2
-  m_Modification:
-    serializedVersion: 3
-    m_TransformParent: {fileID: 0}
-    m_Modifications:
-    - target: {fileID: 5183033465216785530, guid: 45d93a95a3ab96447aacd7fb3b20cd6a, type: 3}
-      propertyPath: m_Name
-      value: Enemy
-      objectReference: {fileID: 0}
-    - target: {fileID: 6430493995641699354, guid: 45d93a95a3ab96447aacd7fb3b20cd6a, type: 3}
-      propertyPath: m_LocalPosition.x
-      value: -26.53
-      objectReference: {fileID: 0}
-    - target: {fileID: 6430493995641699354, guid: 45d93a95a3ab96447aacd7fb3b20cd6a, type: 3}
-      propertyPath: m_LocalPosition.y
-      value: 2
-      objectReference: {fileID: 0}
-    - target: {fileID: 6430493995641699354, guid: 45d93a95a3ab96447aacd7fb3b20cd6a, type: 3}
-      propertyPath: m_LocalPosition.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 6430493995641699354, guid: 45d93a95a3ab96447aacd7fb3b20cd6a, type: 3}
-      propertyPath: m_LocalRotation.w
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 6430493995641699354, guid: 45d93a95a3ab96447aacd7fb3b20cd6a, type: 3}
-      propertyPath: m_LocalRotation.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 6430493995641699354, guid: 45d93a95a3ab96447aacd7fb3b20cd6a, type: 3}
-      propertyPath: m_LocalRotation.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 6430493995641699354, guid: 45d93a95a3ab96447aacd7fb3b20cd6a, type: 3}
-      propertyPath: m_LocalRotation.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 6430493995641699354, guid: 45d93a95a3ab96447aacd7fb3b20cd6a, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 6430493995641699354, guid: 45d93a95a3ab96447aacd7fb3b20cd6a, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 6430493995641699354, guid: 45d93a95a3ab96447aacd7fb3b20cd6a, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.z
-      value: 0
-      objectReference: {fileID: 0}
-    m_RemovedComponents: []
-    m_RemovedGameObjects: []
-    m_AddedGameObjects: []
-    m_AddedComponents:
-    - targetCorrespondingSourceObject: {fileID: 5183033465216785530, guid: 45d93a95a3ab96447aacd7fb3b20cd6a, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 860084785}
-    - targetCorrespondingSourceObject: {fileID: 5183033465216785530, guid: 45d93a95a3ab96447aacd7fb3b20cd6a, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 860084784}
-    - targetCorrespondingSourceObject: {fileID: 5183033465216785530, guid: 45d93a95a3ab96447aacd7fb3b20cd6a, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 860084786}
-  m_SourcePrefab: {fileID: 100100000, guid: 45d93a95a3ab96447aacd7fb3b20cd6a, type: 3}
 --- !u!1 &56080035
 GameObject:
   m_ObjectHideFlags: 0
@@ -2607,10 +2541,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e75f559b2ea5a754283cb2b5da30be76, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::HUDController
-  ammoText: {fileID: 383881342}
-  drugRenderController: {fileID: 37333364}
   drugStateController: {fileID: 1722339809}
+  drugRenderController: {fileID: 37333364}
+  ammoText: {fileID: 383881342}
   drugProgressBar: {fileID: 2129422970}
+  falseDamageThreshold: 0.2
+  falseDamageIntervalRange: {x: 2, y: 6}
+  ammoLieChance: 0.3
+  ammoLieRange: 10
+  ammoFlickerThreshold: 0.6
 --- !u!114 &263938794
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -7544,86 +7483,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1 &860084782 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 5183033465216785530, guid: 45d93a95a3ab96447aacd7fb3b20cd6a, type: 3}
-  m_PrefabInstance: {fileID: 47174076}
-  m_PrefabAsset: {fileID: 0}
---- !u!195 &860084784
-NavMeshAgent:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 860084782}
-  m_Enabled: 1
-  m_AgentTypeID: 0
-  m_Radius: 0.5
-  m_Speed: 11
-  m_Acceleration: 12
-  avoidancePriority: 50
-  m_AngularSpeed: 120
-  m_StoppingDistance: 0
-  m_AutoTraverseOffMeshLink: 1
-  m_AutoBraking: 1
-  m_AutoRepath: 1
-  m_Height: 2
-  m_BaseOffset: 1
-  m_WalkableMask: 4294967295
-  m_ObstacleAvoidanceType: 4
---- !u!114 &860084785
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 860084782}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9f929547f47fe774db6673e4a8eec331, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::EnemyAI
-  agent: {fileID: 860084784}
-  player: {fileID: 2015047510}
-  projectile: {fileID: 4119934868293588181, guid: 9074541729ef8d1428ba1b93921a9a74, type: 3}
-  whatIsPlayer:
-    serializedVersion: 2
-    m_Bits: 8
-  whatIsGround:
-    serializedVersion: 2
-    m_Bits: 64
-  health: 100
-  walkPoint: {x: 0, y: 0, z: 0}
-  walkPointRange: 5
-  timeBetweenAttacks: 2
-  sightRange: 20
-  attackRange: 10
-  playerInSightRange: 0
-  playerInAttackRange: 0
-  hitEffect: {fileID: 6815606522194718221, guid: b6f7c6ead7e4c4b4ba13c2032e03bef4, type: 3}
---- !u!136 &860084786
-CapsuleCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 860084782}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 0
-  m_ProvidesContacts: 0
-  m_Enabled: 1
-  serializedVersion: 2
-  m_Radius: 0.5
-  m_Height: 2
-  m_Direction: 1
-  m_Center: {x: 0, y: 0, z: 0}
 --- !u!1 &866810965
 GameObject:
   m_ObjectHideFlags: 0
@@ -13776,11 +13635,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!4 &2015047510 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: 3750425036264172997, guid: d12583abe92da8242aab31f86ed90991, type: 3}
-  m_PrefabInstance: {fileID: 6942915600404553313}
-  m_PrefabAsset: {fileID: 0}
 --- !u!43 &2085462700
 Mesh:
   m_ObjectHideFlags: 0
@@ -14077,10 +13931,21 @@ PrefabInstance:
       propertyPath: m_Name
       value: Player
       objectReference: {fileID: 0}
+<<<<<<< HEAD
     - target: {fileID: 2466824231263296605, guid: d12583abe92da8242aab31f86ed90991, type: 3}
       propertyPath: DiscreteCollisionEvents
       value: 1
       objectReference: {fileID: 0}
+=======
+    - target: {fileID: 54274763083768427, guid: d12583abe92da8242aab31f86ed90991, type: 3}
+      propertyPath: m_TagString
+      value: Player
+      objectReference: {fileID: 0}
+    - target: {fileID: 1237976367436107351, guid: d12583abe92da8242aab31f86ed90991, type: 3}
+      propertyPath: drugState
+      value: 
+      objectReference: {fileID: 1722339809}
+>>>>>>> main
     - target: {fileID: 3750425036264172997, guid: d12583abe92da8242aab31f86ed90991, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
@@ -14122,6 +13987,10 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 7900941654016257922, guid: d12583abe92da8242aab31f86ed90991, type: 3}
+      propertyPath: drugState
+      value: 
+      objectReference: {fileID: 1722339809}
+    - target: {fileID: 7900941654016257922, guid: d12583abe92da8242aab31f86ed90991, type: 3}
       propertyPath: hudController
       value: 
       objectReference: {fileID: 263938793}
@@ -14129,11 +13998,120 @@ PrefabInstance:
       propertyPath: healthBarFill
       value: 
       objectReference: {fileID: 1710317322}
+    - target: {fileID: 9097976622019605568, guid: d12583abe92da8242aab31f86ed90991, type: 3}
+      propertyPath: ragePullSystem
+      value: 
+      objectReference: {fileID: 6942915600404553319}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 54274763083768427, guid: d12583abe92da8242aab31f86ed90991, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 6942915600404553321}
+    - targetCorrespondingSourceObject: {fileID: 54274763083768427, guid: d12583abe92da8242aab31f86ed90991, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 6942915600404553320}
+    - targetCorrespondingSourceObject: {fileID: 54274763083768427, guid: d12583abe92da8242aab31f86ed90991, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 6942915600404553319}
+    - targetCorrespondingSourceObject: {fileID: 2778723285327677864, guid: d12583abe92da8242aab31f86ed90991, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 6942915600404553318}
   m_SourcePrefab: {fileID: 100100000, guid: d12583abe92da8242aab31f86ed90991, type: 3}
+--- !u!1 &6942915600404553314 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 2778723285327677864, guid: d12583abe92da8242aab31f86ed90991, type: 3}
+  m_PrefabInstance: {fileID: 6942915600404553313}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &6942915600404553315 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 4202172052954646380, guid: d12583abe92da8242aab31f86ed90991, type: 3}
+  m_PrefabInstance: {fileID: 6942915600404553313}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b4bebc3013e031e47b0f2296635291a3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PlayerCharacter
+--- !u!114 &6942915600404553316 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 1237976367436107351, guid: d12583abe92da8242aab31f86ed90991, type: 3}
+  m_PrefabInstance: {fileID: 6942915600404553313}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8d6650cfdbcbf89408969c055c61be2a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PlayerCam
+--- !u!1 &6942915600404553317 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 54274763083768427, guid: d12583abe92da8242aab31f86ed90991, type: 3}
+  m_PrefabInstance: {fileID: 6942915600404553313}
+  m_PrefabAsset: {fileID: 0}
+--- !u!81 &6942915600404553318
+AudioListener:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6942915600404553314}
+  m_Enabled: 1
+--- !u!114 &6942915600404553319
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6942915600404553317}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 980a063206355ec458a0ad4c65645458, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::RagePullSystem
+  playerCam: {fileID: 6942915600404553316}
+  playerCharacter: {fileID: 6942915600404553315}
+  drugState: {fileID: 1722339809}
+  initialImpulseMultiplier: 2
+--- !u!114 &6942915600404553320
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6942915600404553317}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a2cb9a2d41b0cd04e95a57686a428689, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::HallucinationEscalation
+  drugState: {fileID: 1722339809}
+  hudController: {fileID: 263938793}
+  enemySpawner: {fileID: 0}
+  fractureMaterial: {fileID: 2100000, guid: 061a1d7e1a4c5414898d016e47a3e4df, type: 2}
+  floorCrackDecalPrefab: {fileID: 5588236119190886563, guid: f3c60882d7608f745be893060cc59fcd, type: 3}
+  decalSpawnRadius: 8
+  maxDecals: 6
+  navMeshSampleDistance: 2
+  spawnRateScale: 3
+  decalSpawnCooldown: 0.1
+--- !u!114 &6942915600404553321
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6942915600404553317}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9e2feb94f0b4e3a41bcd8d6bfa49af58, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::BreathingGeometry
+  drugState: {fileID: 1722339809}
+  breathingMaterial: {fileID: 2100000, guid: b5ff45b6b5d29534bb089e2a7bf443bf, type: 2}
+  breathingSpeed: 1.5
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
@@ -14166,4 +14144,3 @@ SceneRoots:
   - {fileID: 263938797}
   - {fileID: 1195830081}
   - {fileID: 191180907}
-  - {fileID: 47174076}
