@@ -13,17 +13,14 @@ MonoBehaviour:
   m_Name: DrugState_Steroid
   m_EditorClassIdentifier: Assembly-CSharp::DrugStateData
   stateType: 2
-  duration: 20
+  duration: 8
   hasCrash: 1
   crashState: {fileID: 11400000, guid: 389a62c704ea653478e3104c980976ed, type: 2}
-  moveSpeedMultiplier: 0.85
-  jumpForceMultiplier: 1.4
-  gravityScaleMultiplier: 1.3
-  lookSensitivityMultiplier: 0.8
-  fov: 55
-  fireRateMultiplier: 0.8
-  recoilMultiplier: 1.5
-  spreadMultiplier: 1.2
+  moveSpeed: 9
+  jumpForce: 5
+  gravityScale: 1
+  lookSensitivity: 1
+  fov: 50
   rendererIndex: 4
   spawnFakeEnemies: 0
   fakeEnemyChance: 0
@@ -37,15 +34,10 @@ MonoBehaviour:
   objectDriftSpeed: 0.2
   jumpVariance: 0
   enableRagePull: 1
-  ragePullDuration: 0.35
-  ragePullForce: 10
-  cameraHeightOffset: -0.15
-  tunnelVignetteIntensity: 0.6
-  overrideEnemyAppearance: 0
-  enemyMesh: {fileID: 0}
-  enemyMaterial: {fileID: 0}
-  enemyScale: {x: 1, y: 1, z: 1}
-  enemySpeedMultiplier: 1
-  enemyDamageMultiplier: 0.75
-  enemyHealthMultiplier: 1
-  enemyAttackRateMultiplier: 1
+  ragePullDuration: 0.3
+  ragePullForce: 8
+  cameraHeightOffset: -0.2
+  tunnelVignetteIntensity: 0.5
+  fireRate: 10
+  recoil: 1
+  spread: 0.01

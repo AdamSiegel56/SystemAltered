@@ -63,14 +63,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerHealth
   maxHealth: 100
-  ragePullSystem: {fileID: 0}
+  currentHealth: 100
   drugRenderController: {fileID: 2435563151005594078}
   healthBarFill: {fileID: 0}
   fullHealthColor: {r: 0, g: 1, b: 0, a: 1}
   midHealthColor: {r: 1, g: 0.92156863, b: 0.015686275, a: 1}
   lowHealthColor: {r: 1, g: 0, b: 0, a: 1}
-  midHealthThreshold: 0.6
-  lowHealthThreshold: 0.3
 --- !u!1 &1947856693749739159
 GameObject:
   m_ObjectHideFlags: 0
@@ -395,7 +393,7 @@ Transform:
   m_GameObject: {fileID: 4110162286328953137}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 1.58, z: 0}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -415,7 +413,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerCam
   sensitivity: 0.1
-  drugState: {fileID: 0}
 --- !u!114 &7900941654016257922
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -431,16 +428,14 @@ MonoBehaviour:
   range: 50
   damage: 10
   fireRate: 10
-  inaccuracyDistance: 5
-  isPelletWeapon: 0
   bulletsPerShot: 6
-  magSize: 30
-  reloadTime: 2
+  isPelletWeapon: 0
   muzzle: {fileID: 4373559503014625407}
+  inaccuracyDistance: 5
   laser: {fileID: 7010031781266517415, guid: 2d259e1f01475624fbcf5e713f216c34, type: 3}
   fadeDuration: 0.5
+  magSize: 30
   hudController: {fileID: 0}
-  drugState: {fileID: 0}
 --- !u!1 &4586129644127656472
 GameObject:
   m_ObjectHideFlags: 0
@@ -589,7 +584,6 @@ MonoBehaviour:
   motor: {fileID: 2466824231263296605}
   root: {fileID: 7185153952514518922}
   cameraTarget: {fileID: 8686488863522024041}
-  drugState: {fileID: 0}
   walkSpeed: 15
   crouchSpeed: 7
   jumpSpeed: 20
@@ -679,7 +673,6 @@ MonoBehaviour:
   soberState: {fileID: 11400000, guid: 94d1fe18cb0b95c41b89d7643b38ffe4, type: 2}
   particleWeed: {fileID: 8371852497659150976, guid: 61ca87527c7527445b5bdc4f63bc654b, type: 3}
   particleLoc: {fileID: 5951418477201712839}
-  particleLifetime: 8
 --- !u!54 &118903819038621369
 Rigidbody:
   m_ObjectHideFlags: 0

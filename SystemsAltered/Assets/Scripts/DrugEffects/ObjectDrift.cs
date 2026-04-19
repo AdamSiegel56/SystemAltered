@@ -3,100 +3,76 @@ using UnityEngine;
 /// <summary>
 /// THC environmental deception: objects slowly drift from their original
 /// positions when outside the player's view frustum.
+/// Attach to any driftable object in the arena.
 /// </summary>
 public class ObjectDrift : MonoBehaviour
 {
-    [Header("References")]
-    [SerializeField] private DrugStateController drugState;
-
     [Header("Drift Settings")]
-    [SerializeField] private float maxDriftRadius = 1.5f;
-    [Tooltip("How close to the target counts as 'arrived' and a new target is chosen")]
-    [SerializeField] private float targetReachedDistance = 0.1f;
-    [Tooltip("Viewport margin for visibility test (0 = edge, 0.5 = center)")]
-    [SerializeField] private float viewportMargin = 0.05f;
+    public float maxDriftRadius = 1.5f;
 
-    private Vector3 _originalPosition;
-    private Vector3 _driftTarget;
-    private Camera _playerCam;
-    private DrugStateData _lastAppliedState;
+    private Vector3 originalPosition;
+    private Vector3 driftTarget;
+    private float driftSpeed;
+    private bool driftEnabled;
 
-    private DrugStateData State => drugState != null ? drugState.CurrentState : null;
-    private bool DriftEnabled => State != null && State.enableObjectDrift;
-    private float DriftSpeed => State != null ? State.objectDriftSpeed : 0f;
+    private Camera playerCam;
 
-    // --- Lifecycle ---
-
-    private void Start()
+    void Start()
     {
-        _originalPosition = transform.position;
-        _driftTarget = _originalPosition;
+        originalPosition = transform.position;
+        driftTarget = originalPosition;
     }
 
-    private void Update()
+    void OnEnable()
     {
-        HandleStateChange();
-
-        if (!DriftEnabled) return;
-        if (!EnsureCamera()) return;
-        if (IsVisibleToPlayer()) return;
-
-        DriftTowardTarget();
+        DrugEventBus.OnDrugStateChanged += ApplyState;
     }
 
-    // --- State reactions ---
-
-    private void HandleStateChange()
+    void OnDisable()
     {
-        var current = State;
-        if (current == _lastAppliedState) return;
+        DrugEventBus.OnDrugStateChanged -= ApplyState;
+    }
 
-        _lastAppliedState = current;
+    void ApplyState(DrugStateData state)
+    {
+        driftEnabled = state.enableObjectDrift;
+        driftSpeed = state.objectDriftSpeed;
 
-        // Reset position when drift turns off
-        if (!DriftEnabled)
+        if (!driftEnabled)
         {
-            transform.position = _originalPosition;
-            _driftTarget = _originalPosition;
+            transform.position = originalPosition;
+            driftTarget = originalPosition;
         }
     }
 
-    private bool EnsureCamera()
+    void Update()
     {
-        if (_playerCam != null) return true;
+        if (!driftEnabled) return;
 
-        _playerCam = Camera.main;
-        return _playerCam != null;
-    }
+        // Lazy-find camera (Camera.main can be null on first frame)
+        if (playerCam == null)
+        {
+            playerCam = Camera.main;
+            if (playerCam == null) return;
+        }
 
-    // --- Visibility ---
+        // Check visibility using viewport + distance
+        Vector3 viewportPos = playerCam.WorldToViewportPoint(transform.position);
+        bool isVisible = viewportPos.z > 0f
+                         && viewportPos.x > 0.05f && viewportPos.x < 0.95f
+                         && viewportPos.y > 0.05f && viewportPos.y < 0.95f;
 
-    private bool IsVisibleToPlayer()
-    {
-        var viewportPos = _playerCam.WorldToViewportPoint(transform.position);
+        if (isVisible) return;
 
-        return viewportPos.z > 0f
-            && viewportPos.x > viewportMargin && viewportPos.x < 1f - viewportMargin
-            && viewportPos.y > viewportMargin && viewportPos.y < 1f - viewportMargin;
-    }
-
-    // --- Drift ---
-
-    private void DriftTowardTarget()
-    {
-        if (Vector3.Distance(transform.position, _driftTarget) < targetReachedDistance)
-            PickNewDriftTarget();
+        // Not visible — drift toward target
+        if (Vector3.Distance(transform.position, driftTarget) < 0.1f)
+        {
+            Vector2 offset = Random.insideUnitCircle * maxDriftRadius;
+            driftTarget = originalPosition + new Vector3(offset.x, 0, offset.y);
+        }
 
         transform.position = Vector3.MoveTowards(
-            transform.position,
-            _driftTarget,
-            DriftSpeed * Time.deltaTime
+            transform.position, driftTarget, driftSpeed * Time.deltaTime
         );
-    }
-
-    private void PickNewDriftTarget()
-    {
-        var offset = Random.insideUnitCircle * maxDriftRadius;
-        _driftTarget = _originalPosition + new Vector3(offset.x, 0f, offset.y);
     }
 }

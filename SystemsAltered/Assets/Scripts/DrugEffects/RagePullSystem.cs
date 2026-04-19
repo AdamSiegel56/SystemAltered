@@ -3,84 +3,85 @@ using UnityEngine;
 /// <summary>
 /// Steroids rage pull: when the player takes damage, involuntarily lunge
 /// toward the damage source. Camera snaps hard toward the attacker and
-/// the body is pulled by force.
+/// the body is pulled by force. Feels aggressive and out of control.
 /// </summary>
 public class RagePullSystem : MonoBehaviour
 {
     [Header("References")]
-    [SerializeField] private PlayerCam playerCam;
-    [SerializeField] private PlayerCharacter playerCharacter;
-    [SerializeField] private DrugStateController drugState;
+    public PlayerCamera playerCamera;
+    public Rigidbody playerRigidbody;
 
-    [Header("Tuning")]
-    [Tooltip("Initial impulse force multiplier — layered on top of the drug's ragePullForce")]
-    [SerializeField] private float initialImpulseMultiplier = 2f;
+    private DrugStateData currentState;
+    private bool ragePullActive;
+    private float ragePullTimer;
+    private Vector3 ragePullDirection;
+    private Vector3 damageSource;
 
-    private bool _ragePullActive;
-    private float _ragePullTimer;
-    private Vector3 _ragePullDirection;
-    private Vector3 _damageSource;
+    void OnEnable()
+    {
+        DrugEventBus.OnDrugStateChanged += ApplyState;
+    }
 
-    private DrugStateData State => drugState != null ? drugState.CurrentState : null;
-    private bool RagePullEnabled => State != null && State.enableRagePull;
+    void OnDisable()
+    {
+        DrugEventBus.OnDrugStateChanged -= ApplyState;
+    }
 
-    // --- Public API ---
+    void ApplyState(DrugStateData state)
+    {
+        currentState = state;
+        ragePullActive = false;
+        ragePullTimer = 0f;
+    }
 
     public void OnDamageTaken(Vector3 damageSourcePosition)
     {
-        if (!RagePullEnabled) return;
+        if (currentState == null || !currentState.enableRagePull) return;
 
-        _damageSource = damageSourcePosition;
-        _ragePullDirection = (damageSourcePosition - transform.position).normalized;
-        _ragePullDirection.y = 0f;
-        _ragePullTimer = State.ragePullDuration;
-        _ragePullActive = true;
+        damageSource = damageSourcePosition;
+        ragePullDirection = (damageSourcePosition - transform.position).normalized;
+        ragePullDirection.y = 0;
+        ragePullTimer = currentState.ragePullDuration;
+        ragePullActive = true;
 
-        ApplyCameraSnap();
-        ApplyInitialImpulse();
+        // Hard camera snap toward damage source — not a gentle lerp
+        if (playerCamera != null)
+        {
+            playerCamera.ApplyRagePull(damageSourcePosition);
+        }
+
+        // Immediate impulse so the player feels it instantly
+        if (playerRigidbody != null)
+        {
+            playerRigidbody.AddForce(
+                ragePullDirection * currentState.ragePullForce * 2f,
+                ForceMode.Impulse
+            );
+        }
     }
 
-    // --- Lifecycle ---
-
-    private void FixedUpdate()
+    void FixedUpdate()
     {
-        if (!_ragePullActive || State == null) return;
+        if (!ragePullActive || playerRigidbody == null || currentState == null) return;
 
-        _ragePullTimer -= Time.fixedDeltaTime;
-        if (_ragePullTimer <= 0f)
+        ragePullTimer -= Time.fixedDeltaTime;
+
+        if (ragePullTimer <= 0f)
         {
-            _ragePullActive = false;
+            ragePullActive = false;
             return;
         }
 
-        ApplySustainedPull();
-        ApplyCameraSnap();
-    }
-
-    // --- Effects ---
-
-    private void ApplyInitialImpulse()
-    {
-        if (playerCharacter == null) return;
-
-        playerCharacter.AddExternalImpulse(
-            _ragePullDirection * State.ragePullForce * initialImpulseMultiplier
+        // Sustained pull force toward damage source
+        playerRigidbody.AddForce(
+            ragePullDirection * currentState.ragePullForce,
+            ForceMode.Acceleration
         );
-    }
 
-    private void ApplySustainedPull()
-    {
-        if (playerCharacter == null) return;
-
-        // Acceleration-style: scaled by fixedDeltaTime so feels continuous
-        playerCharacter.AddExternalImpulse(
-            _ragePullDirection * State.ragePullForce * Time.fixedDeltaTime
-        );
-    }
-
-    private void ApplyCameraSnap()
-    {
-        if (playerCam == null) return;
-        playerCam.ApplyRagePull(_damageSource);
+        // Keep snapping camera toward source during the pull
+        if (playerCamera != null)
+        {
+            playerCamera.ApplyRagePull(damageSource);
+        }
     }
 }

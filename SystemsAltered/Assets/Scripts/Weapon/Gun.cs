@@ -1,6 +1,5 @@
 using UnityEngine;
 using System.Collections;
-using DG.Tweening;
 
 public struct GunInput
 {
@@ -10,62 +9,131 @@ public struct GunInput
 
 public class Gun : MonoBehaviour
 {
-    [Header("Weapon Stats")]
+    private Transform cam;
+
     [SerializeField] private float range = 50f;
     [SerializeField] private float damage = 10f;
     [SerializeField] private float fireRate = 10f;
+    [SerializeField] private int bulletsPerShot = 6;
+    [SerializeField] private bool isPelletWeapon;
+    [SerializeField] private Transform muzzle;
     [SerializeField] private float inaccuracyDistance = 5f;
 
-    [Header("Pellet Weapon")]
-    [SerializeField] private bool isPelletWeapon;
-    [SerializeField] private int bulletsPerShot = 6;
-
-    [Header("Ammo")]
-    [SerializeField] private int magSize;
-    [SerializeField] private float reloadTime = 2f;
-
-    [Header("Visuals")]
-    [SerializeField] private Transform muzzle;
     [SerializeField] private GameObject laser;
     [SerializeField] private float fadeDuration = 0.5f;
-    [SerializeField] private GameObject gunModel;
 
-    [Header("References")]
+    private bool requestedShoot;
+    private bool requestedReload;
+    private float nextFireTime;
+    
+    private int currentAmmo;
+    [SerializeField] private int magSize;
     [SerializeField] private HUDController hudController;
-    [SerializeField] private DrugStateController drugState;
-
-    private Transform _cam;
-    private bool _requestedShoot;
-    private bool _requestedReload;
-    private float _nextFireTime;
-    private int _currentAmmo;
-    private bool _isReloading;
-
-    // --- Multiplier accessors ---
-
-    private float FireRateMult =>
-        drugState?.CurrentState?.fireRateMultiplier ?? 1f;
-
-    private float SpreadMult =>
-        drugState?.CurrentState?.spreadMultiplier ?? 1f;
-
-    // --- Lifecycle ---
+    
+    private bool isReloading;
+    
 
     public void Initialize()
     {
-        _cam = Camera.main.transform;
-        _currentAmmo = magSize;
+        cam = Camera.main.transform;
+        currentAmmo = magSize;
     }
 
     public void UpdateInput(GunInput input)
     {
-        _requestedShoot = input.Shoot;
-        _requestedReload = input.Reload;
+        requestedShoot = input.Shoot;
+        requestedReload = input.Reload;
     }
 
     public void Tick(float deltaTime)
     {
         HandleShooting();
+    }
+
+    private void HandleShooting()
+    {
+        if (requestedShoot && Time.time >= nextFireTime)
+        {
+            Shoot();
+            nextFireTime = Time.time + 1f / fireRate;
+        }
+    }
+
+    private void Shoot()
+    {
+        if (isReloading) return;
+        
+        currentAmmo--;
+        
+        if (CanShoot() && !isReloading)
+        {
+            if (isPelletWeapon)
+            {
+                for (int i = 0; i < bulletsPerShot; i++)
+                {
+                    RaycastHit hit;
+                    if (Physics.Raycast(cam.position, GetShootingDirection(), out hit, range))
+                    {
+                        EnemyAI enemy = hit.collider.GetComponent<EnemyAI>();
+                        if (enemy != null)
+                        {
+                            enemy.TakeDamage(damage, hit.point, hit.normal);
+                        }
+                        CreateLaser(hit.point);
+                    }
+                    else
+                    {
+                        CreateLaser(cam.position + GetShootingDirection() * range);
+                    }
+                }
+            }
+            else
+            {
+                RaycastHit hit;
+                if (Physics.Raycast(cam.position, GetShootingDirection(), out hit, range))
+                {
+                    EnemyAI enemy = hit.collider.GetComponent<EnemyAI>();
+                    if (enemy != null)
+                    {
+                        enemy.TakeDamage(damage, hit.point, hit.normal);
+                    }
+                    CreateLaser(hit.point);
+                }
+                else
+                {
+                    CreateLaser(cam.position + GetShootingDirection() * range);
+                }
+            }
+        }
+        else if (!isReloading && CanReload())
+        {
+            StartCoroutine(Reload());
+        }
+
+    }
+
+    IEnumerator Reload()
+    {
+        if (!CanReload()) yield break;
+
+        isReloading = true;
+
+        yield return new WaitForSeconds(2f);
+
+        currentAmmo = magSize;
+
+        isReloading = false;
+        requestedReload = false;
+    }
+    
+    private void HandleReload()
+    {
+        if (requestedReload && !isReloading && CanReload())
+        {
+            StartCoroutine(Reload());
+        }
+
+        requestedReload = false;
     }
 
     private void Update()
@@ -75,124 +143,60 @@ public class Gun : MonoBehaviour
         UpdateUI();
     }
 
-    // --- Shooting ---
-
-    private void HandleShooting()
+    bool CanShoot()
     {
-        if (!_requestedShoot || Time.time < _nextFireTime) return;
-
-        Shoot();
-        _nextFireTime = Time.time + 1f / (fireRate * FireRateMult);
-    }
-
-    private void Shoot()
-    {
-        if (_isReloading) return;
-
-        _currentAmmo--;
-
-        if (!CanShoot())
+        if (currentAmmo > 0)
         {
-            if (CanReload()) StartCoroutine(Reload());
-            return;
-        }
-
-        var shotCount = isPelletWeapon ? bulletsPerShot : 1;
-        for (int i = 0; i < shotCount; i++)
-            FireSingleRay();
-    }
-
-    private void FireSingleRay()
-    {
-        var direction = GetShootingDirection();
-
-        if (Physics.Raycast(_cam.position, direction, out RaycastHit hit, range))
-        {
-            var enemy = hit.collider.GetComponent<EnemyAI>();
-            if (enemy != null)
-                enemy.TakeDamage(damage, hit.point, hit.normal);
-
-            CreateLaser(hit.point);
+            return true;
         }
         else
         {
-            CreateLaser(_cam.position + direction * range);
+            return false;
         }
     }
 
-    private Vector3 GetShootingDirection()
+    bool CanReload()
     {
-        var inaccuracy = inaccuracyDistance * SpreadMult;
-
-        var targetPos = _cam.position + _cam.forward * range;
-        targetPos += new Vector3(
-            Random.Range(-inaccuracy, inaccuracy),
-            Random.Range(-inaccuracy, inaccuracy),
-            Random.Range(-inaccuracy, inaccuracy)
-        );
-
-        return (targetPos - _cam.position).normalized;
+        return currentAmmo < magSize && !isReloading;
+    }
+    
+    void UpdateUI()
+    {
+        hudController.SetRealAmmo(currentAmmo);
     }
 
-    // --- Reloading ---
-
-    private void HandleReload()
+    Vector3 GetShootingDirection()
     {
-        if (_requestedReload && !_isReloading && CanReload())
-            StartCoroutine(Reload());
-
-        _requestedReload = false;
-    }
-
-    private IEnumerator Reload()
-    {
-        if (!CanReload()) yield break;
-
-        _isReloading = true;
-
-        gunModel.transform.DOLocalRotate(new Vector3(360,0,0), reloadTime, RotateMode.FastBeyond360);
+        Vector3 targetPos = cam.position + cam.forward * range;
         
-        yield return new WaitForSeconds(reloadTime);
-
-        _currentAmmo = magSize;
-        _isReloading = false;
-        _requestedReload = false;
+        targetPos = new Vector3
+        (
+            targetPos.x + Random.Range(-inaccuracyDistance, inaccuracyDistance),
+            targetPos.y + Random.Range(-inaccuracyDistance, inaccuracyDistance),
+            targetPos.z + Random.Range(-inaccuracyDistance, inaccuracyDistance)
+        );
+        
+        Vector3 direction = targetPos - cam.position;
+        return direction.normalized;
     }
 
-    // --- Queries ---
-
-    private bool CanShoot() => _currentAmmo > 0;
-    private bool CanReload() => _currentAmmo < magSize && !_isReloading;
-
-    // --- UI ---
-
-    private void UpdateUI()
+    void CreateLaser(Vector3 end)
     {
-        hudController.SetRealAmmo(_currentAmmo);
-    }
-
-    // --- Visuals ---
-
-    private void CreateLaser(Vector3 end)
-    {
-        var lr = Instantiate(laser).GetComponent<LineRenderer>();
-        lr.SetPositions(new[] { muzzle.position, end });
+        LineRenderer lr = Instantiate(laser).GetComponent<LineRenderer>();
+        lr.SetPositions(new Vector3[2]  { muzzle.position, end } );
         StartCoroutine(FadeLaser(lr));
     }
-
-    private IEnumerator FadeLaser(LineRenderer lr)
+    
+    IEnumerator FadeLaser(LineRenderer lr)
     {
-        float alpha = 1f;
-        while (alpha > 0f)
+        float alpha = 1;
+        while (alpha > 0)
         {
             alpha -= Time.deltaTime / fadeDuration;
-
-            var start = lr.startColor;
-            var end = lr.endColor;
-            lr.startColor = new Color(start.r, start.g, start.b, alpha);
-            lr.endColor = new Color(end.r, end.g, end.b, alpha);
-
+            lr.startColor = new Color(lr.startColor.r,lr.startColor.g,lr.startColor.b,alpha);
+            lr.endColor = new Color(lr.endColor.r,lr.endColor.g,lr.endColor.b,alpha);
             yield return null;
         }
     }
+    
 }

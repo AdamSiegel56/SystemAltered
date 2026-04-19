@@ -19,19 +19,14 @@ public class DrugStateData : ScriptableObject
     public bool hasCrash = true;
     public DrugStateData crashState;
 
-    [Header("Movement Multipliers")]
-    public float moveSpeedMultiplier = 1f;
-    public float jumpForceMultiplier = 1f;
-    public float gravityScaleMultiplier = 1f;
+    [Header("Movement")]
+    public float moveSpeed = 6f;
+    public float jumpForce = 5f;
+    public float gravityScale = 1f;
 
-    [Header("Look Multipliers")]
-    public float lookSensitivityMultiplier = 1f;
+    [Header("Look")]
+    public float lookSensitivity = 1f;
     public float fov = 60f;
-
-    [Header("Combat Multipliers")]
-    public float fireRateMultiplier = 1f;
-    public float recoilMultiplier = 1f;
-    public float spreadMultiplier = 1f;
 
     [Header("Rendering (URP Renderer Swap)")]
     [Tooltip("Index in the URP Renderer List")]
@@ -71,17 +66,9 @@ public class DrugStateData : ScriptableObject
     public float cameraHeightOffset = 0f;
     [Tooltip("Peripheral tunnel vignette intensity 0-1")]
     public float tunnelVignetteIntensity = 0f;
-    
-    [Header("Enemy Appearance Override")]
-    [Tooltip("If true, enemies will swap to the mesh/material below")]
-    public bool overrideEnemyAppearance;
-    public Mesh enemyMesh;
-    public Material enemyMaterial;
-    public Vector3 enemyScale = Vector3.one;
 
-    [Header("Enemy Stat Multipliers")]
-    public float enemySpeedMultiplier = 1f;
-    public float enemyDamageMultiplier = 1f;
-    public float enemyHealthMultiplier = 1f;
-    public float enemyAttackRateMultiplier = 1f;
+    [Header("Combat")]
+    public float fireRate = 5f;
+    public float recoil = 1f;
+    public float spread = 0.01f;
 }

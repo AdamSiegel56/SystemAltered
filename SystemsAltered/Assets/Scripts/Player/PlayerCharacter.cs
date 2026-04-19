@@ -1,9 +1,10 @@
+using System.Net.Http.Headers;
 using UnityEngine;
 using KinematicCharacterController;
 
 public enum CrouchInput
 {
-    None,
+    None, 
     Toggle
 }
 
@@ -24,7 +25,6 @@ public struct CharacterInput
 
 public class PlayerCharacter : MonoBehaviour, ICharacterController
 {
-    [Header("References")]
     [SerializeField] private KinematicCharacterMotor motor;
     [SerializeField] private Transform root;
     [SerializeField] private Transform cameraTarget;
@@ -87,9 +87,8 @@ public class PlayerCharacter : MonoBehaviour, ICharacterController
         requestedSustainedJump = input.JumpSustain;
         requestedCrouch = input.Crouch switch
         {
-            CrouchInput.Toggle => !_requestedCrouch,
-            CrouchInput.None   => _requestedCrouch,
-            _                  => _requestedCrouch
+            CrouchInput.Toggle => !requestedCrouch,
+            CrouchInput.None => requestedCrouch,
         };
     }
 
@@ -118,31 +117,23 @@ public class PlayerCharacter : MonoBehaviour, ICharacterController
             t: 1f - Mathf.Exp(-crouchHeightResponse * deltaTime)
         );
     }
-
-    /// <summary>
-    /// Queue an external impulse to be applied on the next velocity update.
-    /// Used by systems like RagePullSystem.
-    /// </summary>
-    public void AddExternalImpulse(Vector3 impulse)
-    {
-        _externalImpulse += impulse;
-    }
-
-    // --- ICharacterController ---
+    
 
     public void UpdateRotation(ref Quaternion currentRotation, float deltaTime)
     {
-        var forward = Vector3.ProjectOnPlane(
-            _requestedRotation * Vector3.forward,
-            motor.CharacterUp
-        );
-
-        if (forward != Vector3.zero)
+        var forward = Vector3.ProjectOnPlane
+            (
+                requestedRotation * Vector3.forward, 
+                motor.CharacterUp
+            );
+        
+        if(forward != Vector3.zero)
             currentRotation = Quaternion.LookRotation(forward, motor.CharacterUp);
     }
 
     public void UpdateVelocity(ref Vector3 currentVelocity, float deltaTime)
     {
+        // if on the ground
         if (motor.GroundingStatus.IsStableOnGround)
         {
             var groundMovement = motor.GetDirectionTangentToSurface
@@ -207,8 +198,9 @@ public class PlayerCharacter : MonoBehaviour, ICharacterController
             
         }
 
-        if (_requestedJump)
-            ApplyJump(ref currentVelocity);
+        if (requestedJump)
+        {
+            requestedJump = false;
 
             motor.ForceUnground(0.1f);
             
@@ -219,47 +211,33 @@ public class PlayerCharacter : MonoBehaviour, ICharacterController
         }
     }
 
-    private Vector3 CalculateGroundVelocity()
-    {
-        var groundMovement = motor.GetDirectionTangentToSurface(
-            direction: _requestedMovement,
-            surfaceNormal: motor.GroundingStatus.GroundNormal
-        );
-
-        var baseSpeed = _stance == Stance.Stand ? walkSpeed : crouchSpeed;
-        return groundMovement * baseSpeed * MoveSpeedMult;
-    }
-
-    private void ApplyJump(ref Vector3 currentVelocity)
-    {
-        _requestedJump = false;
-        motor.ForceUnground(0f);
-
-        var currentVerticalSpeed = Vector3.Dot(currentVelocity, motor.CharacterUp);
-        var targetVerticalSpeed = Mathf.Max(currentVerticalSpeed, jumpSpeed * JumpForceMult);
-
-        currentVelocity += motor.CharacterUp * (targetVerticalSpeed - currentVerticalSpeed);
-    }
-
     public void BeforeCharacterUpdate(float deltaTime)
     {
-        if (_requestedCrouch && _stance == Stance.Stand)
+        // Crouch
+        if (requestedCrouch && _stance == Stance.Stand)
         {
             _stance = Stance.Crouch;
-            motor.SetCapsuleDimensions(
-                radius: motor.Capsule.radius,
-                height: crouchHeight,
-                yOffset: crouchHeight * 0.5f
-            );
+            motor.SetCapsuleDimensions
+                (
+                    radius: motor.Capsule.radius,
+                    height: crouchHeight,
+                    yOffset: crouchHeight * 0.5f
+                );
         }
+    }
+
+    public void PostGroundingUpdate(float deltaTime)
+    {
     }
 
     public void AfterCharacterUpdate(float deltaTime)
     {
-        if (!_requestedCrouch && _stance is not Stance.Stand)
+        // Uncrouch
+        if (!requestedCrouch && _stance is not Stance.Stand)
         {
             _stance = Stance.Stand;
-            motor.SetCapsuleDimensions(
+            motor.SetCapsuleDimensions
+            (
                 radius: motor.Capsule.radius,
                 height: standHeight,
                 yOffset: standHeight * 0.5f
@@ -288,12 +266,28 @@ public class PlayerCharacter : MonoBehaviour, ICharacterController
         
     }
 
-    public void PostGroundingUpdate(float deltaTime) { }
-    public bool IsColliderValidForCollisions(Collider coll) => coll;
-    public void OnGroundHit(Collider hitCollider, Vector3 hitNormal, Vector3 hitPoint, ref HitStabilityReport hitStabilityReport) { }
-    public void OnMovementHit(Collider hitCollider, Vector3 hitNormal, Vector3 hitPoint, ref HitStabilityReport hitStabilityReport) { }
-    public void ProcessHitStabilityReport(Collider hitCollider, Vector3 hitNormal, Vector3 hitPoint, Vector3 atCharacterPosition, Quaternion atCharacterRotation, ref HitStabilityReport hitStabilityReport) { }
-    public void OnDiscreteCollisionDetected(Collider hitCollider) { }
+    public bool IsColliderValidForCollisions(Collider coll)
+    {
+        return coll;
+    }
 
+    public void OnGroundHit(Collider hitCollider, Vector3 hitNormal, Vector3 hitPoint, ref HitStabilityReport hitStabilityReport)
+    {
+    }
+
+    public void OnMovementHit(Collider hitCollider, Vector3 hitNormal, Vector3 hitPoint,
+        ref HitStabilityReport hitStabilityReport)
+    {
+    }
+
+    public void ProcessHitStabilityReport(Collider hitCollider, Vector3 hitNormal, Vector3 hitPoint, Vector3 atCharacterPosition,
+        Quaternion atCharacterRotation, ref HitStabilityReport hitStabilityReport)
+    {
+    }
+
+    public void OnDiscreteCollisionDetected(Collider hitCollider)
+    {
+    }
+    
     public Transform GetCameraTarget() => cameraTarget;
 }
