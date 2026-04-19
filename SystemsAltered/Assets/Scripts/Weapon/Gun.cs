@@ -1,5 +1,6 @@
 using UnityEngine;
 using System.Collections;
+using DG.Tweening;
 
 public struct GunInput
 {
@@ -27,6 +28,7 @@ public class Gun : MonoBehaviour
     [SerializeField] private Transform muzzle;
     [SerializeField] private GameObject laser;
     [SerializeField] private float fadeDuration = 0.5f;
+    [SerializeField] private GameObject gunModel;
 
     [Header("References")]
     [SerializeField] private HUDController hudController;
@@ -147,6 +149,9 @@ public class Gun : MonoBehaviour
         if (!CanReload()) yield break;
 
         _isReloading = true;
+
+        gunModel.transform.DOLocalRotate(new Vector3(360,0,0), reloadTime, RotateMode.FastBeyond360);
+        
         yield return new WaitForSeconds(reloadTime);
 
         _currentAmmo = magSize;
