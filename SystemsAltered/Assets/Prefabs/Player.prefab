@@ -11,9 +11,12 @@ GameObject:
   - component: {fileID: 3750425036264172997}
   - component: {fileID: 3284124699694879456}
   - component: {fileID: 9097976622019605568}
+  - component: {fileID: 7488138252749305014}
+  - component: {fileID: 4976858072410852727}
+  - component: {fileID: 7021220854848077046}
   m_Layer: 3
   m_Name: Player
-  m_TagString: Untagged
+  m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -63,12 +66,67 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerHealth
   maxHealth: 100
-  currentHealth: 100
+  ragePullSystem: {fileID: 7021220854848077046}
   drugRenderController: {fileID: 2435563151005594078}
   healthBarFill: {fileID: 0}
   fullHealthColor: {r: 0, g: 1, b: 0, a: 1}
   midHealthColor: {r: 1, g: 0.92156863, b: 0.015686275, a: 1}
   lowHealthColor: {r: 1, g: 0, b: 0, a: 1}
+  midHealthThreshold: 0.6
+  lowHealthThreshold: 0.3
+--- !u!114 &7488138252749305014
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 54274763083768427}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9e2feb94f0b4e3a41bcd8d6bfa49af58, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::BreathingGeometry
+  drugState: {fileID: 7147974290959004945}
+  breathingMaterial: {fileID: 2100000, guid: b5ff45b6b5d29534bb089e2a7bf443bf, type: 2}
+  breathingSpeed: 1.5
+--- !u!114 &4976858072410852727
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 54274763083768427}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a2cb9a2d41b0cd04e95a57686a428689, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::HallucinationEscalation
+  drugState: {fileID: 7147974290959004945}
+  hudController: {fileID: 0}
+  enemySpawner: {fileID: 0}
+  fractureMaterial: {fileID: 2100000, guid: 061a1d7e1a4c5414898d016e47a3e4df, type: 2}
+  floorCrackDecalPrefab: {fileID: 5588236119190886563, guid: f3c60882d7608f745be893060cc59fcd, type: 3}
+  decalSpawnRadius: 8
+  maxDecals: 6
+  navMeshSampleDistance: 2
+  spawnRateScale: 3
+  decalSpawnCooldown: 0.1
+--- !u!114 &7021220854848077046
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 54274763083768427}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 980a063206355ec458a0ad4c65645458, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::RagePullSystem
+  playerCam: {fileID: 1237976367436107351}
+  playerCharacter: {fileID: 4202172052954646380}
+  drugState: {fileID: 7147974290959004945}
+  initialImpulseMultiplier: 2
 --- !u!1 &1947856693749739159
 GameObject:
   m_ObjectHideFlags: 0
@@ -201,6 +259,7 @@ GameObject:
   - component: {fileID: 7158700329419856015}
   - component: {fileID: 3849973151940344755}
   - component: {fileID: 2435563151005594078}
+  - component: {fileID: 1280812410282415459}
   m_Layer: 0
   m_Name: Main Camera
   m_TagString: MainCamera
@@ -335,6 +394,14 @@ MonoBehaviour:
   damageRendererIndex: 3
   damageFlashDuration: 0.2
   falseDamageFlashDuration: 0.15
+--- !u!81 &1280812410282415459
+AudioListener:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2778723285327677864}
+  m_Enabled: 1
 --- !u!1 &3699407144844432976
 GameObject:
   m_ObjectHideFlags: 0
@@ -413,6 +480,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerCam
   sensitivity: 0.1
+  drugState: {fileID: 7147974290959004945}
 --- !u!114 &7900941654016257922
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -428,14 +496,16 @@ MonoBehaviour:
   range: 50
   damage: 10
   fireRate: 10
-  bulletsPerShot: 6
-  isPelletWeapon: 0
-  muzzle: {fileID: 4373559503014625407}
   inaccuracyDistance: 5
+  isPelletWeapon: 0
+  bulletsPerShot: 6
+  magSize: 30
+  reloadTime: 2
+  muzzle: {fileID: 4373559503014625407}
   laser: {fileID: 7010031781266517415, guid: 2d259e1f01475624fbcf5e713f216c34, type: 3}
   fadeDuration: 0.5
-  magSize: 30
   hudController: {fileID: 0}
+  drugState: {fileID: 7147974290959004945}
 --- !u!1 &4586129644127656472
 GameObject:
   m_ObjectHideFlags: 0
@@ -584,6 +654,7 @@ MonoBehaviour:
   motor: {fileID: 2466824231263296605}
   root: {fileID: 7185153952514518922}
   cameraTarget: {fileID: 8686488863522024041}
+  drugState: {fileID: 0}
   walkSpeed: 15
   crouchSpeed: 7
   jumpSpeed: 20
@@ -673,6 +744,7 @@ MonoBehaviour:
   soberState: {fileID: 11400000, guid: 94d1fe18cb0b95c41b89d7643b38ffe4, type: 2}
   particleWeed: {fileID: 8371852497659150976, guid: 61ca87527c7527445b5bdc4f63bc654b, type: 3}
   particleLoc: {fileID: 5951418477201712839}
+  particleLifetime: 8
 --- !u!54 &118903819038621369
 Rigidbody:
   m_ObjectHideFlags: 0

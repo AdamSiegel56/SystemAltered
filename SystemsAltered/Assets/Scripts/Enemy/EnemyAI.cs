@@ -26,13 +26,10 @@ public class EnemyAI : MonoBehaviour
 
     [Header("Patrol")]
     [SerializeField] private float walkPointRange = 10f;
-    [Tooltip("How far from the random point to search the NavMesh for a valid location")]
     [SerializeField] private float navMeshSampleDistance = 2f;
-    [Tooltip("How close to the walk point counts as 'arrived'")]
     [SerializeField] private float walkPointArrivalDistance = 1f;
 
     [Header("Fake Enemy")]
-    [Tooltip("If true, this enemy is a hallucination — can't damage the player and dies instantly")]
     [SerializeField] private bool isFakeEnemy;
     [SerializeField] private GameObject fakeDeathPopPrefab;
 
@@ -48,7 +45,7 @@ public class EnemyAI : MonoBehaviour
     private bool _playerInAttackRange;
     private bool _isDead;
 
-    // Cached base appearance (for restoring on sober)
+    // Cached base appearance
     private float _baseSpeed;
     private Vector3 _baseScale;
     private Mesh _baseMesh;
@@ -77,10 +74,6 @@ public class EnemyAI : MonoBehaviour
 
     private void Awake()
     {
-<<<<<<< HEAD
-        player = GameObject.Find("Character").transform;
-        agent = GetComponent<NavMeshAgent>();
-=======
         if (agent == null) agent = GetComponent<NavMeshAgent>();
         if (meshFilter == null) meshFilter = GetComponentInChildren<MeshFilter>();
         if (meshRenderer == null) meshRenderer = GetComponentInChildren<MeshRenderer>();
@@ -91,7 +84,6 @@ public class EnemyAI : MonoBehaviour
 
         CacheBaseAppearance();
         InitializeHealth();
->>>>>>> main
     }
 
     private void Update()
@@ -114,6 +106,13 @@ public class EnemyAI : MonoBehaviour
     private void InitializeHealth()
     {
         _currentHealth = maxHealth;
+
+        if (isFakeEnemy && healthBar != null)
+        {
+            healthBar.gameObject.SetActive(false);
+            return;
+        }
+
         if (healthBar != null)
             healthBar.Initialize(this);
     }
@@ -249,7 +248,6 @@ public class EnemyAI : MonoBehaviour
         var bulletObj = Instantiate(projectile, transform.position, Quaternion.identity);
         var bullet = bulletObj.GetComponent<Bullet>();
 
-        // Fold base attack damage and drug multiplier into what the bullet carries
         var finalDamage = attackDamage * DamageMult;
 
         if (bullet != null)
@@ -259,7 +257,6 @@ public class EnemyAI : MonoBehaviour
         }
         else
         {
-            // Fallback for legacy Rigidbody-only projectiles
             var rb = bulletObj.GetComponent<Rigidbody>();
             if (rb != null)
             {

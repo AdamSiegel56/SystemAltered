@@ -30,13 +30,6 @@ public class Player : MonoBehaviour
 
     private void Update()
     {
-<<<<<<< HEAD
-        var input = _inputActions.Gameplay;
-        var deltaTime = Time.deltaTime;
-        
-        // Get camera input and update its rotation
-        var cameraInput = new CamInput {Look = input.Look.ReadValue<Vector2>()};
-=======
         var gameplay = _inputActions.Gameplay;
 
         UpdateCamera(gameplay);
@@ -53,7 +46,6 @@ public class Player : MonoBehaviour
             Look = gameplay.Look.ReadValue<Vector2>()
         };
 
->>>>>>> main
         playerCam.UpdateRotation(cameraInput);
         playerCam.UpdatePosition(playerCharacter.GetCameraTarget());
     }
@@ -63,29 +55,16 @@ public class Player : MonoBehaviour
         var characterInput = new CharacterInput
         {
             Rotation = playerCam.transform.rotation,
-<<<<<<< HEAD
-            Move = input.Move.ReadValue<Vector2>(),
-            Jump = input.Jump.WasPressedThisFrame(),
-            JumpSustain = input.Jump.IsPressed(),
-            Crouch = input.Crouch.WasPressedThisFrame()
-            ? CrouchInput.Toggle
-            : CrouchInput.None
-=======
             Move     = gameplay.Move.ReadValue<Vector2>(),
             Jump     = gameplay.Jump.WasPressedThisFrame(),
             Crouch   = gameplay.Crouch.WasPressedThisFrame()
                 ? CrouchInput.Toggle
                 : CrouchInput.None
->>>>>>> main
         };
 
         playerCharacter.UpdateInput(characterInput);
-<<<<<<< HEAD
-        playerCharacter.UpdateBody(deltaTime);
-=======
         playerCharacter.UpdateBody();
     }
->>>>>>> main
 
     private void UpdateGun(PlayerInputActions.GameplayActions gameplay)
     {
