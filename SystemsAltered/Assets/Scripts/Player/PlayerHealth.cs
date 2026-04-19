@@ -8,70 +8,100 @@ using UnityEngine.SceneManagement;
 /// </summary>
 public class PlayerHealth : MonoBehaviour
 {
-    public float maxHealth = 100f;
-    public float currentHealth;
+    [Header("Health")]
+    [SerializeField] private float maxHealth = 100f;
 
     [Header("References")]
-    // public RagePullSystem ragePullSystem;
-    public DrugRenderController drugRenderController;
+    [SerializeField] private RagePullSystem ragePullSystem;
+    [SerializeField] private DrugRenderController drugRenderController;
 
-    [Header("Player Health Bar (Screen Space)")]
-    public Image healthBarFill;
-    public Color fullHealthColor = Color.green;
-    public Color midHealthColor = Color.yellow;
-    public Color lowHealthColor = Color.red;
+    [Header("Health Bar (Screen Space)")]
+    [SerializeField] private Image healthBarFill;
+    [SerializeField] private Color fullHealthColor = Color.green;
+    [SerializeField] private Color midHealthColor = Color.yellow;
+    [SerializeField] private Color lowHealthColor = Color.red;
+    [Range(0f, 1f)] [SerializeField] private float midHealthThreshold = 0.6f;
+    [Range(0f, 1f)] [SerializeField] private float lowHealthThreshold = 0.3f;
+
+    private float _currentHealth;
 
     public static event System.Action<float> OnHealthChanged;
     public static event System.Action OnPlayerDied;
 
-    void Start()
+    public float CurrentHealth => _currentHealth;
+    public float MaxHealth => maxHealth;
+    public float NormalizedHealth => _currentHealth / maxHealth;
+
+    // --- Lifecycle ---
+
+    private void Start()
     {
-        currentHealth = maxHealth;
-        UpdateHealthBar();
-        OnHealthChanged?.Invoke(currentHealth / maxHealth);
+        _currentHealth = maxHealth;
+        RefreshUI();
+        BroadcastHealthChange();
     }
+
+    // --- Public API ---
 
     public void TakeDamage(float damage, Vector3 sourcePosition)
     {
-        currentHealth -= damage;
-        currentHealth = Mathf.Max(0, currentHealth);
+        if (_currentHealth <= 0f) return;
 
-        UpdateHealthBar();
-        OnHealthChanged?.Invoke(currentHealth / maxHealth);
+        _currentHealth = Mathf.Max(0f, _currentHealth - damage);
 
-       // if (ragePullSystem != null)
-           // ragePullSystem.OnDamageTaken(sourcePosition);
+        RefreshUI();
+        BroadcastHealthChange();
 
-        if (drugRenderController != null)
-            drugRenderController.FlashDamage();
+        TriggerDamageReactions(sourcePosition);
 
-        if (currentHealth <= 0)
+        if (_currentHealth <= 0f)
             Die();
     }
 
     public void Heal(float amount)
     {
-        currentHealth = Mathf.Min(currentHealth + amount, maxHealth);
-        UpdateHealthBar();
-        OnHealthChanged?.Invoke(currentHealth / maxHealth);
+        _currentHealth = Mathf.Min(_currentHealth + amount, maxHealth);
+        RefreshUI();
+        BroadcastHealthChange();
     }
 
-    void UpdateHealthBar()
+    // --- Damage reactions ---
+
+    private void TriggerDamageReactions(Vector3 sourcePosition)
+    {
+        if (ragePullSystem != null)
+            ragePullSystem.OnDamageTaken(sourcePosition);
+
+        if (drugRenderController != null)
+            drugRenderController.FlashDamage();
+    }
+
+    // --- UI ---
+
+    private void RefreshUI()
     {
         if (healthBarFill == null) return;
 
-        float normalized = currentHealth / maxHealth;
+        var normalized = NormalizedHealth;
         healthBarFill.fillAmount = normalized;
-
-        if (normalized > 0.6f)
-            healthBarFill.color = fullHealthColor;
-        else if (normalized > 0.3f)
-            healthBarFill.color = midHealthColor;
-        else
-            healthBarFill.color = lowHealthColor;
+        healthBarFill.color = GetHealthColor(normalized);
     }
 
-    void Die()
+    private Color GetHealthColor(float normalized)
+    {
+        if (normalized > midHealthThreshold) return fullHealthColor;
+        if (normalized > lowHealthThreshold) return midHealthColor;
+        return lowHealthColor;
+    }
+
+    private void BroadcastHealthChange()
+    {
+        OnHealthChanged?.Invoke(NormalizedHealth);
+    }
+
+    // --- Death ---
+
+    private void Die()
     {
         OnPlayerDied?.Invoke();
         SceneManager.LoadScene(SceneManager.GetActiveScene().name);

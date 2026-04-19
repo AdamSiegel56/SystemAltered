@@ -3,44 +3,45 @@ using UnityEngine;
 /// <summary>
 /// THC door deception: when active, displays an overlay mesh that makes
 /// open doors appear closed and closed doors appear open.
-/// Attach to each door in the arena.
 /// </summary>
 public class DoorDeception : MonoBehaviour
 {
+    [Header("References")]
+    [SerializeField] private DrugStateController drugState;
+
     [Header("Visual Override")]
     [Tooltip("A fake door mesh that blocks the doorway visually (no collider)")]
-    public GameObject fakeClosedOverlay;
+    [SerializeField] private GameObject fakeClosedOverlay;
     [Tooltip("The real door visual (disabled when door appears 'open' on THC)")]
-    public GameObject realDoorVisual;
+    [SerializeField] private GameObject realDoorVisual;
 
     [Header("State")]
-    public bool isActuallyOpen = false;  // Set by door logic / triggers
+    [SerializeField] private bool isActuallyOpen;
 
-    private bool deceptionActive;
+    private DrugStateData _lastAppliedState;
 
-    void Start()
+    private bool DeceptionActive =>
+        drugState?.CurrentState?.invertDoorVisuals ?? false;
+
+    // --- Lifecycle ---
+
+    private void Start()
     {
-        if (fakeClosedOverlay != null)
-            fakeClosedOverlay.SetActive(false);
-
+        if (fakeClosedOverlay != null) fakeClosedOverlay.SetActive(false);
         UpdateVisuals();
     }
 
-    void OnEnable()
+    private void Update()
     {
-        DrugEventBus.OnDrugStateChanged += ApplyState;
-    }
+        // Re-apply visuals when the drug state changes
+        var current = drugState != null ? drugState.CurrentState : null;
+        if (current == _lastAppliedState) return;
 
-    void OnDisable()
-    {
-        DrugEventBus.OnDrugStateChanged -= ApplyState;
-    }
-
-    void ApplyState(DrugStateData state)
-    {
-        deceptionActive = state.invertDoorVisuals;
+        _lastAppliedState = current;
         UpdateVisuals();
     }
+
+    // --- Public API ---
 
     /// <summary>
     /// Call when door actually opens or closes (gameplay logic).
@@ -51,29 +52,40 @@ public class DoorDeception : MonoBehaviour
         UpdateVisuals();
     }
 
-    void UpdateVisuals()
+    // --- Visual logic ---
+
+    private void UpdateVisuals()
     {
-        if (!deceptionActive)
+        if (DeceptionActive)
+            ApplyDeceivedVisuals();
+        else
+            ApplyNormalVisuals();
+    }
+
+    private void ApplyNormalVisuals()
+    {
+        SetVisual(realDoorVisual, !isActuallyOpen);
+        SetVisual(fakeClosedOverlay, false);
+    }
+
+    private void ApplyDeceivedVisuals()
+    {
+        if (isActuallyOpen)
         {
-            // Normal: show real state
-            if (realDoorVisual != null) realDoorVisual.SetActive(!isActuallyOpen);
-            if (fakeClosedOverlay != null) fakeClosedOverlay.SetActive(false);
+            // Door is open but appears closed — show fake overlay
+            SetVisual(realDoorVisual, false);
+            SetVisual(fakeClosedOverlay, true);
         }
         else
         {
-            // THC: invert visual state
-            // If door is actually open, show fake closed overlay
-            // If door is actually closed, hide real visual (looks open)
-            if (isActuallyOpen)
-            {
-                if (realDoorVisual != null) realDoorVisual.SetActive(false);
-                if (fakeClosedOverlay != null) fakeClosedOverlay.SetActive(true);
-            }
-            else
-            {
-                if (realDoorVisual != null) realDoorVisual.SetActive(false);
-                if (fakeClosedOverlay != null) fakeClosedOverlay.SetActive(false);
-            }
+            // Door is closed but appears open — hide everything
+            SetVisual(realDoorVisual, false);
+            SetVisual(fakeClosedOverlay, false);
         }
+    }
+
+    private static void SetVisual(GameObject obj, bool active)
+    {
+        if (obj != null) obj.SetActive(active);
     }
 }

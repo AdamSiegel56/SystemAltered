@@ -13,14 +13,17 @@ MonoBehaviour:
   m_Name: DrugState_THC
   m_EditorClassIdentifier: Assembly-CSharp::DrugStateData
   stateType: 3
-  duration: 25
-  hasCrash: 1
-  crashState: {fileID: 11400000, guid: 389a62c704ea653478e3104c980976ed, type: 2}
-  moveSpeed: 8
-  jumpForce: 8
-  gravityScale: 0.5
-  lookSensitivity: 1
-  fov: 55
+  duration: 30
+  hasCrash: 0
+  crashState: {fileID: 0}
+  moveSpeedMultiplier: 0.7
+  jumpForceMultiplier: 0.85
+  gravityScaleMultiplier: 0.6
+  lookSensitivityMultiplier: 0.75
+  fov: 70
+  fireRateMultiplier: 0.9
+  recoilMultiplier: 0.8
+  spreadMultiplier: 1.5
   rendererIndex: 3
   spawnFakeEnemies: 0
   fakeEnemyChance: 0
@@ -28,16 +31,21 @@ MonoBehaviour:
   hudCorruptionThreshold: 0.4
   geometryFractureThreshold: 0.7
   enableBreathingGeometry: 1
-  breathingAmplitude: 0.05
-  invertDoorVisuals: 0
+  breathingAmplitude: 0.08
+  invertDoorVisuals: 1
   enableObjectDrift: 1
-  objectDriftSpeed: 0.2
-  jumpVariance: 0.3
+  objectDriftSpeed: 0.3
+  jumpVariance: 0.25
   enableRagePull: 0
   ragePullDuration: 0.3
   ragePullForce: 8
   cameraHeightOffset: 0
   tunnelVignetteIntensity: 0
-  fireRate: 10
-  recoil: 1
-  spread: 0.01
+  overrideEnemyAppearance: 0
+  enemyMesh: {fileID: 0}
+  enemyMaterial: {fileID: 0}
+  enemyScale: {x: 1, y: 1, z: 1}
+  enemySpeedMultiplier: 1
+  enemyDamageMultiplier: 1
+  enemyHealthMultiplier: 1
+  enemyAttackRateMultiplier: 1
