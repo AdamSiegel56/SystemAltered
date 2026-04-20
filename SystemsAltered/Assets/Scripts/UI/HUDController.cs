@@ -29,6 +29,8 @@ public class HUDController : MonoBehaviour
     public TextMeshProUGUI enemiesText;
     private int enemiesKilled;
     private int enemiesInStage;
+
+    [Header("EndScreen")] public TextMeshProUGUI endScreenEnemiesKilled;
     
     private float corruptionLevel;
     private float nextFalseDamageTime;
@@ -47,7 +49,7 @@ public class HUDController : MonoBehaviour
     {
         Debug.Log("KILLED");
         enemiesKilled++;
-
+        
         
         
     }
@@ -73,7 +75,8 @@ public class HUDController : MonoBehaviour
         UpdateAmmoDisplay();
         UpdateDrugProgressBar();
         enemiesText.text = enemiesKilled.ToString();
-        
+        endScreenEnemiesKilled.text = enemiesKilled.ToString();
+
         if (corruptionLevel > 0.2f)
         {
             HandleFalseDamageIndicators();

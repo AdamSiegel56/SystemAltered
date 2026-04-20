@@ -1,37 +1,50 @@
+using System;
 using System.Collections;
+using TMPro;
 using UnityEngine;
+using UnityEngine.InputSystem;
+using UnityEngine.PlayerLoop;
 using UnityEngine.SceneManagement;
 
 public class LevelLoader : MonoBehaviour
 {
-    public static LevelLoader Instance { get; set; }
     public Animator transition;
     public float transitionTime = 1f;
+    private bool hasDied;
+    public InputActionReference inputActionAsset;
+
+    public HUDController hudController;
     
-    private void Awake()
+    
+    private void OnEnable()
     {
-        // Enforce the singleton pattern: destroy duplicates
-        if (Instance != null && Instance != this)
+        PlayerHealth.OnPlayerDied += ShowEndScreen;
+        inputActionAsset.action.Enable();
+    }
+
+    private void OnDisable()
+    {
+        PlayerHealth.OnPlayerDied -= ShowEndScreen;
+        inputActionAsset.action.Disable();
+    }
+
+    public void Start()
+    {
+        
+    }
+
+    private void Update()
+    {
+        if (inputActionAsset.action.triggered && hasDied)
         {
-            Destroy(gameObject);
-            return;
+            SceneManager.LoadScene(SceneManager.GetActiveScene().name);
         }
-
-        Instance = this;
-
-        // Optional: Keep the object alive across scene changes
-        DontDestroyOnLoad(gameObject);
     }
 
-    public void LoadNextLevel()
+    public void ShowEndScreen()
     {
-        StartCoroutine(LoadNextLevelCoroutine());
-    }
-
-    IEnumerator LoadNextLevelCoroutine()
-    {
+        
         transition.SetTrigger("EndLevel");
-        yield return new WaitForSeconds(transitionTime);
-        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex + 1);
+        hasDied = true;
     }
 }
