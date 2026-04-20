@@ -1518,7 +1518,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 191180906}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: f4ebbaa96a6b5184595047cd91cc07a2, type: 3}
   m_Name: 
@@ -12254,63 +12254,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 72e0b64aa3bac3e4195c08ab52d724e0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::DrugStateController
---- !u!1001 &1767178115
-PrefabInstance:
-  m_ObjectHideFlags: 0
-  serializedVersion: 2
-  m_Modification:
-    serializedVersion: 3
-    m_TransformParent: {fileID: 0}
-    m_Modifications:
-    - target: {fileID: 1653242659528534153, guid: bf95260bee5230a428082a4cd6ffcbb2, type: 3}
-      propertyPath: m_LocalPosition.x
-      value: -26.09731
-      objectReference: {fileID: 0}
-    - target: {fileID: 1653242659528534153, guid: bf95260bee5230a428082a4cd6ffcbb2, type: 3}
-      propertyPath: m_LocalPosition.y
-      value: 1.0000019
-      objectReference: {fileID: 0}
-    - target: {fileID: 1653242659528534153, guid: bf95260bee5230a428082a4cd6ffcbb2, type: 3}
-      propertyPath: m_LocalPosition.z
-      value: -3.9684076
-      objectReference: {fileID: 0}
-    - target: {fileID: 1653242659528534153, guid: bf95260bee5230a428082a4cd6ffcbb2, type: 3}
-      propertyPath: m_LocalRotation.w
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 1653242659528534153, guid: bf95260bee5230a428082a4cd6ffcbb2, type: 3}
-      propertyPath: m_LocalRotation.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 1653242659528534153, guid: bf95260bee5230a428082a4cd6ffcbb2, type: 3}
-      propertyPath: m_LocalRotation.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 1653242659528534153, guid: bf95260bee5230a428082a4cd6ffcbb2, type: 3}
-      propertyPath: m_LocalRotation.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 1653242659528534153, guid: bf95260bee5230a428082a4cd6ffcbb2, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 1653242659528534153, guid: bf95260bee5230a428082a4cd6ffcbb2, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 1653242659528534153, guid: bf95260bee5230a428082a4cd6ffcbb2, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 7026081572047915702, guid: bf95260bee5230a428082a4cd6ffcbb2, type: 3}
-      propertyPath: m_Name
-      value: DrugPickup_Steroids
-      objectReference: {fileID: 0}
-    m_RemovedComponents: []
-    m_RemovedGameObjects: []
-    m_AddedGameObjects: []
-    m_AddedComponents: []
-  m_SourcePrefab: {fileID: 100100000, guid: bf95260bee5230a428082a4cd6ffcbb2, type: 3}
 --- !u!1 &1913883283
 GameObject:
   m_ObjectHideFlags: 0
@@ -13628,4 +13571,3 @@ SceneRoots:
   - {fileID: 191180907}
   - {fileID: 47174076}
   - {fileID: 3731178}
-  - {fileID: 1767178115}

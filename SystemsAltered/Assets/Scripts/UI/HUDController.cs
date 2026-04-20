@@ -22,6 +22,9 @@ public class HUDController : MonoBehaviour
     public DrugStateController drugStateController;
     public Image drugProgressBar;
 
+    [Header("NextDrug")] public TextMeshProUGUI nextDrugText;
+    public Image nextDrugProgressBar;
+    
     [Header("EnemiesLeft")] 
     public TextMeshProUGUI enemiesText;
     private int enemiesKilled;
@@ -45,10 +48,7 @@ public class HUDController : MonoBehaviour
         Debug.Log("KILLED");
         enemiesKilled++;
 
-        if (enemiesKilled >= enemiesInStage)
-        {
-            LevelLoader.Instance.LoadNextLevel();
-        }
+        
         
     }
     
@@ -72,8 +72,7 @@ public class HUDController : MonoBehaviour
     {
         UpdateAmmoDisplay();
         UpdateDrugProgressBar();
-        
-        enemiesText.text = enemiesKilled + " / " + enemiesInStage;
+        enemiesText.text = enemiesKilled.ToString();
         
         if (corruptionLevel > 0.2f)
         {
@@ -148,5 +147,15 @@ public class HUDController : MonoBehaviour
         }
         
         
+    }
+
+    public void UpdateDrugEarnBar(float progress, float full)
+    {
+        nextDrugProgressBar.fillAmount = progress/full;
+    }
+    
+    public void SetDrugText(string text)
+    {
+        nextDrugText.text = text;
     }
 }

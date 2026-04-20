@@ -65,6 +65,7 @@ public class DrugStateController : MonoBehaviour
 
     public void SetState(DrugStateData newState)
     {
+        Debug.Log("SetState");
         currentState = newState;
         timer = newState.duration;
         stateStartTime = Time.time;
@@ -73,16 +74,16 @@ public class DrugStateController : MonoBehaviour
         
         if (newState.stateType ==  DrugState.THC)
         {
-            WeedParticle();
+            WeedParticle(newState.duration);
         }
 
         DrugEventBus.OnDrugStateChanged?.Invoke(newState);
     }
 
-    private void WeedParticle()
+    private void WeedParticle(float time)
     {
         GameObject newParticle = Instantiate(particleWeed, particleLoc);
-        Destroy(newParticle, 8f);
+        Destroy(newParticle, time);
     }
 
 }
