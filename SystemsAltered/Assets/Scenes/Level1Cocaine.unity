@@ -10903,6 +10903,14 @@ PrefabInstance:
       propertyPath: m_Name
       value: Player
       objectReference: {fileID: 0}
+    - target: {fileID: 54274763083768427, guid: d12583abe92da8242aab31f86ed90991, type: 3}
+      propertyPath: m_TagString
+      value: Untagged
+      objectReference: {fileID: 0}
+    - target: {fileID: 1237976367436107351, guid: d12583abe92da8242aab31f86ed90991, type: 3}
+      propertyPath: drugState
+      value: 
+      objectReference: {fileID: 706645609}
     - target: {fileID: 3750425036264172997, guid: d12583abe92da8242aab31f86ed90991, type: 3}
       propertyPath: m_LocalPosition.x
       value: -1.9092305
@@ -17935,8 +17943,8 @@ NavMeshObstacle:
   m_Shape: 1
   m_Extents: {x: 1.5000001, y: 3.5000002, z: 11.000001}
   m_MoveThreshold: 0.1
-  m_Carve: 0
-  m_CarveOnlyStationary: 1
+  m_Carve: 1
+  m_CarveOnlyStationary: 0
   m_Center: {x: 0, y: 0, z: -2.5}
   m_TimeToStationary: 0.5
 --- !u!43 &1361491521
