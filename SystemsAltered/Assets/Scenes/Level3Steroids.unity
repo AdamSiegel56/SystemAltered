@@ -1944,6 +1944,7 @@ MonoBehaviour:
   drugRenderController: {fileID: 470073090}
   drugStateController: {fileID: 1659829619}
   drugProgressBar: {fileID: 1800257203}
+  enemiesText: {fileID: 0}
 --- !u!114 &1604796421
 MonoBehaviour:
   m_ObjectHideFlags: 0

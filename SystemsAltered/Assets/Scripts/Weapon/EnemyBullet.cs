@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 
 /// <summary>
@@ -28,7 +29,7 @@ public class EnemyBullet : MonoBehaviour
         rb.linearVelocity = dir.normalized * speed;
 
         // Ignore all enemy colliders so the bullet doesn't hit the shooter
-        IgnoreEnemyColliders();
+        //IgnoreEnemyColliders();
 
         Destroy(gameObject, lifeTime);
     }
@@ -43,22 +44,19 @@ public class EnemyBullet : MonoBehaviour
         }
     }
 
-    void OnCollisionEnter(Collision other)
-    {
-        // Skip enemies and fake enemies
-        if (other.gameObject.CompareTag("Enemy") || other.gameObject.CompareTag("FakeEnemy"))
-            return;
+    
 
-        // Find PlayerHealth anywhere in hierarchy
-        var playerHealth = other.gameObject.GetComponentInParent<PlayerHealth>();
-        if (playerHealth)
+    private void OnTriggerEnter(Collider other)
+    {
+        Debug.Log("Hit");
+        if (!other.gameObject.CompareTag("Player"))
         {
-            playerHealth.TakeDamage(damage, originPosition);
-            Destroy(gameObject);
             return;
         }
-
-        // Wall or obstacle
+        var ph = other.gameObject.GetComponentInParent<PlayerHealth>();
+        if (ph == null) return;
+        Debug.Log("AAA");
+        ph.TakeDamage(damage, originPosition);
         Destroy(gameObject);
     }
 }

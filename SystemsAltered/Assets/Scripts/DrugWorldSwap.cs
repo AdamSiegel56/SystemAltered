@@ -39,6 +39,7 @@ public class DrugWorldSwap : MonoBehaviour
 
     public void TransferWorlds(bool isTogglingDark)
     {
+        Debug.Log("attempt");
         // Find all objects in the scene (Warning: FindObjectsByType is performance-heavy)
         GameObject[] allObjects = FindObjectsByType<GameObject>(FindObjectsInactive.Include, FindObjectsSortMode.None);
         if (isTogglingDark)

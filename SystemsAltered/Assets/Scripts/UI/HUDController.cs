@@ -1,6 +1,8 @@
+using System;
 using UnityEngine;
 using TMPro;
 using UnityEngine.UI;
+using Random = UnityEngine.Random;
 
 /// <summary>
 /// Corrupts the HUD based on meth hallucination intensity.
@@ -20,8 +22,41 @@ public class HUDController : MonoBehaviour
     public DrugStateController drugStateController;
     public Image drugProgressBar;
 
+    [Header("EnemiesLeft")] 
+    public TextMeshProUGUI enemiesText;
+    private int enemiesKilled;
+    private int enemiesInStage;
+    
     private float corruptionLevel;
     private float nextFalseDamageTime;
+
+    private void OnEnable()
+    {
+        EnemyAI.EnemyKilled += EnemyKilledUI;
+    }
+
+    private void OnDisable()
+    {
+        EnemyAI.EnemyKilled -= EnemyKilledUI;
+    }
+
+    private void EnemyKilledUI()
+    {
+        Debug.Log("KILLED");
+        enemiesKilled++;
+
+        if (enemiesKilled >= enemiesInStage)
+        {
+            LevelLoader.Instance.LoadNextLevel();
+        }
+        
+    }
+    
+    private void Start()
+    {
+        GameObject[] enemies = GameObject.FindGameObjectsWithTag("Enemy");
+        enemiesInStage =  enemies.Length;
+    }
 
     public void SetCorruptionLevel(float level)
     {
@@ -37,7 +72,9 @@ public class HUDController : MonoBehaviour
     {
         UpdateAmmoDisplay();
         UpdateDrugProgressBar();
-
+        
+        enemiesText.text = enemiesKilled + " / " + enemiesInStage;
+        
         if (corruptionLevel > 0.2f)
         {
             HandleFalseDamageIndicators();

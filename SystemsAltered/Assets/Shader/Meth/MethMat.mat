@@ -46,6 +46,7 @@ Material:
     - _NoiseScale: 10
     - _Offset: 0.02
     - _PanSpeed: 0.62
+    - _Progress: 0
     - _QueueControl: 0
     - _QueueOffset: 0
     - _Waviness: 20

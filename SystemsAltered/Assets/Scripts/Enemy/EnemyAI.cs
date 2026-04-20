@@ -1,3 +1,4 @@
+using System.Threading;
 using UnityEngine;
 using UnityEngine.AI;
 
@@ -26,7 +27,8 @@ public class EnemyAI:MonoBehaviour
     // States
     public float sightRange, attackRange;
     public bool playerInSightRange, playerInAttackRange;
-    
+    public static event System.Action EnemyKilled;
+
     [SerializeField] private GameObject hitEffect;
 
     void Awake()
@@ -101,6 +103,7 @@ public class EnemyAI:MonoBehaviour
         alreadyAttacked = false;
     }
 
+    private bool hasntEvent;
     public void TakeDamage(float damage, Vector3 hitPos, Vector3 hitNormal)
     {
         Instantiate(hitEffect, hitPos, Quaternion.LookRotation(hitNormal));
@@ -108,7 +111,14 @@ public class EnemyAI:MonoBehaviour
         
         if (health <= 0)
         {
+            if (!hasntEvent)
+            {
+                EnemyKilled?.Invoke();
+                hasntEvent = true;
+            }
+
             Invoke(nameof(DestroyEnemy), 0.5f);
+            
         }
     }
 

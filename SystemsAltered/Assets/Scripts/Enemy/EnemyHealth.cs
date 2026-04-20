@@ -25,7 +25,6 @@ public class EnemyHealth : MonoBehaviour
     public bool invulnerable;
 
     public static event System.Action<GameObject> OnEnemyKilled;
-
     void Start()
     {
         currentHealth = maxHealth;
@@ -62,8 +61,8 @@ public class EnemyHealth : MonoBehaviour
 
         if (currentHealth <= 0)
         {
-            OnEnemyKilled?.Invoke(gameObject);
-            Destroy(gameObject);
+            Debug.Log("Dead");
+            Destroy(gameObject, 0.2f);
         }
     }
 }
