@@ -138,23 +138,29 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::EnemyAI
   agent: {fileID: 2789192966944401463}
-  player: {fileID: 0}
-  projectile: {fileID: 4119934868293588181, guid: 9074541729ef8d1428ba1b93921a9a74, type: 3}
+  meshFilter: {fileID: 7654494866252356854}
+  meshRenderer: {fileID: 7908514242665942812}
+  drugState: {fileID: 0}
+  projectile: {fileID: 6372014722697438330, guid: 403ff3cc5e46ec141bab5797fb865339, type: 3}
+  hitEffect: {fileID: 6815606522194718221, guid: b6f7c6ead7e4c4b4ba13c2032e03bef4, type: 3}
+  maxHealth: 100
+  attackDamage: 10
+  timeBetweenAttacks: 2
+  forwardImpulse: 32
+  upwardImpulse: 8
   whatIsPlayer:
     serializedVersion: 2
     m_Bits: 8
   whatIsGround:
     serializedVersion: 2
     m_Bits: 64
-  health: 50
-  walkPoint: {x: 0, y: 0, z: 0}
-  walkPointRange: 5
-  timeBetweenAttacks: 2
   sightRange: 20
   attackRange: 10
-  playerInSightRange: 0
-  playerInAttackRange: 0
-  hitEffect: {fileID: 6815606522194718221, guid: b6f7c6ead7e4c4b4ba13c2032e03bef4, type: 3}
+  walkPointRange: 5
+  navMeshSampleDistance: 2
+  walkPointArrivalDistance: 1
+  isFakeEnemy: 0
+  fakeDeathPopPrefab: {fileID: 0}
 --- !u!195 &2789192966944401463
 NavMeshAgent:
   m_ObjectHideFlags: 0

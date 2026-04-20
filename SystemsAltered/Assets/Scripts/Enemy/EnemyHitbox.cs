@@ -8,6 +8,7 @@ using UnityEngine;
 /// This ensures bullets hit the visible model, not just the NavMeshAgent
 /// capsule which might be offset or too small.
 /// </summary>
+/*
 public class EnemyHitbox : MonoBehaviour
 {
     [SerializeField] private EnemyHealth enemyHealth;
@@ -33,3 +34,4 @@ public class EnemyHitbox : MonoBehaviour
         }
     }
 }
+*/

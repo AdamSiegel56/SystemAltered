@@ -124,9 +124,8 @@ public class HUDController : MonoBehaviour
     
     void UpdateDrugProgressBar()
     {
-        drugProgressBar.gameObject.SetActive(
-            drugStateController.CurrentState != drugStateController.soberState
-        );
+        drugProgressBar.gameObject.SetActive(!drugStateController.IsSober);
+        if (drugStateController.IsSober) return;
         
         if (drugProgressBar == null || drugStateController == null)
             return;

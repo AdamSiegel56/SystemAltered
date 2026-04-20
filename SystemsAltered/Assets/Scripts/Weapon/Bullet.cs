@@ -9,71 +9,73 @@ using UnityEngine;
 [RequireComponent(typeof(SphereCollider))]
 public class Bullet : MonoBehaviour
 {
-    public float speed = 50f;
-    public float lifeTime = 3f;
-    public float damage = 10f;
+    [Header("Ballistics")]
+    [SerializeField] private float speed = 50f;
+    [SerializeField] private float lifeTime = 3f;
 
-    [Header("Fake Enemy Hit")]
-    public GameObject fakeHitPopPrefab;
+    [Header("Impact FX")]
+    [SerializeField] private GameObject hitEffectPrefab;
 
-    private Rigidbody rb;
+    private Rigidbody _rb;
+    private SphereCollider _col;
+    private GameObject _shooter;
+    private float _damage;
 
-    public void Init(Vector3 dir)
+    public void Init(Vector3 direction, float damage, GameObject shooter = null)
     {
-        rb = GetComponent<Rigidbody>();
-        rb.useGravity = false;
-        rb.isKinematic = false;
-        rb.collisionDetectionMode = CollisionDetectionMode.ContinuousDynamic;
-        rb.linearVelocity = dir.normalized * speed;
+        _shooter = shooter;
+        _damage = damage;
 
-        // Ignore the player who shot this bullet
-        IgnoreShooter();
+        _rb = GetComponent<Rigidbody>();
+        _col = GetComponent<SphereCollider>();
+
+        _rb.useGravity = false;
+        _rb.isKinematic = false;
+        _rb.collisionDetectionMode = CollisionDetectionMode.ContinuousDynamic;
+        _rb.linearVelocity = direction.normalized * speed;
+
+        _col.isTrigger = true;
+
+        IgnoreShooterCollisions();
 
         Destroy(gameObject, lifeTime);
     }
 
-    void IgnoreShooter()
+    private void IgnoreShooterCollisions()
     {
-        var playerObj = GameObject.FindGameObjectWithTag("Player");
-        if (playerObj == null) return;
+        if (_shooter == null || _col == null) return;
 
-        Collider bulletCol = GetComponent<Collider>();
-        if (bulletCol == null) return;
-
-        // Ignore every collider on the player and its children
-        Collider[] playerColliders = playerObj.GetComponentsInChildren<Collider>();
-        foreach (var col in playerColliders)
-        {
-            Physics.IgnoreCollision(bulletCol, col, true);
-        }
+        var shooterColliders = _shooter.GetComponentsInChildren<Collider>();
+        foreach (var col in shooterColliders)
+            Physics.IgnoreCollision(_col, col, true);
     }
 
-    void OnCollisionEnter(Collision other)
+    private void OnTriggerEnter(Collider other)
     {
-        // Fake enemies: pop effect, destroy fake, bullet continues
-        if (other.gameObject.CompareTag("FakeEnemy"))
-        {
-            if (fakeHitPopPrefab != null)
-            {
-                GameObject pop = Instantiate(fakeHitPopPrefab, transform.position, Quaternion.identity);
-                Destroy(pop, 0.5f);
-            }
+        var hitObj = other.gameObject;
 
-            Destroy(other.gameObject);
-            return;
-        }
-
-        // Ignore the player who shot it
-        if (other.gameObject.CompareTag("Player"))
+        // Ignore other enemies so bullets don't friendly-fire
+        if (hitObj.CompareTag("Enemy") || hitObj.CompareTag("FakeEnemy"))
             return;
 
-        // Real enemies: deal damage
-        var health = other.gameObject.GetComponentInParent<EnemyHealth>();
-        if (health != null)
+        if (hitObj.CompareTag("Player"))
         {
-            health.TakeDamage(damage);
+            var health = hitObj.GetComponentInParent<PlayerHealth>();
+            if (health != null)
+                health.TakeDamage(_damage, transform.position);
         }
 
+        SpawnHitEffect();
         Destroy(gameObject);
+    }
+
+    private void SpawnHitEffect()
+    {
+        if (hitEffectPrefab == null) return;
+
+        var normal = -_rb.linearVelocity.normalized;
+        if (normal == Vector3.zero) normal = Vector3.up;
+
+        Instantiate(hitEffectPrefab, transform.position, Quaternion.LookRotation(normal));
     }
 }

@@ -1,100 +1,250 @@
-using System.Threading;
 using UnityEngine;
 using UnityEngine.AI;
 
-public class EnemyAI:MonoBehaviour
+public class EnemyAI : MonoBehaviour
 {
-    public NavMeshAgent agent;
+    [Header("References")]
+    [SerializeField] private DrugStateController drugState;
 
-    public Transform player;
-    
-    public GameObject projectile;
-    
+    [Header("Combat")]
+    [SerializeField] private GameObject projectile;
+    [SerializeField] private GameObject hitEffect;
+    [SerializeField] private float maxHealth = 100f;
+    [SerializeField] private float attackDamage = 10f;
+    [SerializeField] private float timeBetweenAttacks = 1.5f;
+    [SerializeField] private float forwardImpulse = 32f;
+    [SerializeField] private float upwardImpulse = 8f;
+
     public LayerMask whatIsPlayer;
     public LayerMask whatIsGround;
 
-    public float health;
-    
-    // Patrolling
-    public Vector3 walkPoint;
-    private bool walkPointSet;
-    public float walkPointRange;
-    
-    // Attacking
-    public float timeBetweenAttacks;
-    bool alreadyAttacked;
-    
-    // States
-    public float sightRange, attackRange;
-    public bool playerInSightRange, playerInAttackRange;
-    public static event System.Action EnemyKilled;
+    [Header("Detection")]
+    [SerializeField] private float sightRange = 15f;
+    [SerializeField] private float attackRange = 8f;
 
-    [SerializeField] private GameObject hitEffect;
+    [Header("Patrol")]
+    [SerializeField] private float walkPointRange = 10f;
+    [SerializeField] private float navMeshSampleDistance = 2f;
+    [SerializeField] private float walkPointArrivalDistance = 1f;
+
+    [Header("Fake Enemy")]
+    [SerializeField] private bool isFakeEnemy;
+    [SerializeField] private GameObject fakeDeathPopPrefab;
+
+    // Runtime state
+    private float currentHealth;
+    private Vector3 walkPoint;
+    private bool walkPointSet;
+    private bool alreadyAttacked;
+    private bool playerInSightRange;
+    private bool playerInAttackRange;
+    private bool isDead;
+
+    // Cached base appearance
+    private float _baseSpeed;
+    private Vector3 _baseScale;
+    private Mesh _baseMesh;
+    private Material _baseMaterial;
+    private DrugStateData _lastAppliedState;
+
+    // --- Drug state injection ---
+
+    /// <summary>
+    /// Set by EnemySpawner after instantiation. Overrides any prefab-assigned value.
+    /// </summary>
+    public DrugStateController DrugState
+    {
+        set => drugState = value;
+    }
+
+    // --- Multiplier accessors ---
+
+    private float SpeedMult =>
+        drugState?.CurrentState?.enemySpeedMultiplier ?? 1f;
+
+    private float DamageMult =>
+        drugState?.CurrentState?.enemyDamageMultiplier ?? 1f;
+
+    private float AttackRateMult =>
+        drugState?.CurrentState?.enemyAttackRateMultiplier ?? 1f;
+
+    public float CurrentHealth => currentHealth;
+    public float MaxHealth => maxHealth;
+    public float NormalizedHealth => currentHealth / maxHealth;
+    public bool IsFake => isFakeEnemy;
+
+    public static event System.Action EnemyKilled;
 
     void Awake()
     {
-        player = GameObject.Find("Character").transform;
-        agent = GetComponent<NavMeshAgent>();
+        if (agent == null) agent = GetComponent<NavMeshAgent>();
+        if (meshFilter == null) meshFilter = GetComponentInChildren<MeshFilter>();
+        if (meshRenderer == null) meshRenderer = GetComponentInChildren<MeshRenderer>();
+
+        var playerObj = GameObject.FindGameObjectWithTag("Player");
+        if (playerObj != null) player = playerObj.transform;
+
+        currentHealth = maxHealth;
+        CacheBaseAppearance();
     }
 
     private void Update()
     {
-        // Check for sight and attack range
-        playerInSightRange = Physics.CheckSphere(transform.position, sightRange, whatIsPlayer);
-        playerInAttackRange = Physics.CheckSphere(transform.position, attackRange, whatIsPlayer);
-        
-        if(!playerInSightRange && !playerInAttackRange) Patrolling();
-        if (playerInSightRange && !playerInAttackRange) ChasePlayer();
-        if(playerInAttackRange && playerInSightRange) AttackPlayer();
+        ApplyDrugStateIfChanged();
+        UpdateDetection();
+        UpdateBehaviour();
     }
-    
-    private void Patrolling()
+
+    private void CacheBaseAppearance()
+    {
+        _baseSpeed = agent != null ? agent.speed : 0f;
+        _baseScale = transform.localScale;
+        _baseMesh = meshFilter != null ? meshFilter.sharedMesh : null;
+        _baseMaterial = meshRenderer != null ? meshRenderer.sharedMaterial : null;
+    }
+
+    private void ApplyDrugStateIfChanged()
+    {
+        var state = drugState != null ? drugState.CurrentState : null;
+        if (state == _lastAppliedState) return;
+
+        _lastAppliedState = state;
+        ApplyAppearance(state);
+        ApplyStats();
+    }
+
+    private void ApplyAppearance(DrugStateData state)
+    {
+        if (state != null && state.overrideEnemyAppearance)
+        {
+            SetMesh(state.enemyMesh != null ? state.enemyMesh : _baseMesh);
+            SetMaterial(state.enemyMaterial != null ? state.enemyMaterial : _baseMaterial);
+            transform.localScale = Vector3.Scale(_baseScale, state.enemyScale);
+        }
+        else
+        {
+            SetMesh(_baseMesh);
+            SetMaterial(_baseMaterial);
+            transform.localScale = _baseScale;
+        }
+    }
+
+    private void SetMesh(Mesh mesh)
+    {
+        if (meshFilter != null) meshFilter.mesh = mesh;
+    }
+
+    private void SetMaterial(Material material)
+    {
+        if (meshRenderer != null) meshRenderer.material = material;
+    }
+
+    private void ApplyStats()
+    {
+        if (agent != null)
+            agent.speed = _baseSpeed * SpeedMult;
+    }
+
+    private void UpdateDetection()
+    {
+        if (player == null)
+        {
+            playerInSightRange = false;
+            playerInAttackRange = false;
+            return;
+        }
+
+        var distance = Vector3.Distance(transform.position, player.position);
+        playerInSightRange  = distance <= sightRange;
+        playerInAttackRange = distance <= attackRange;
+    }
+
+    private void UpdateBehaviour()
+    {
+        if (!playerInSightRange && !playerInAttackRange) Patrol();
+        else if (playerInSightRange && !playerInAttackRange) Chase();
+        else if (playerInAttackRange && playerInSightRange) Attack();
+    }
+
+    // --- Patrol ---
+
+    private void Patrol()
     {
         if (!walkPointSet) SearchWalkPoint();
 
         if (walkPointSet)
             agent.SetDestination(walkPoint);
-            
-        Vector3 distanceToWalkPoint = transform.position - walkPoint;
-            
-        // Walk Point Reached
-        if(distanceToWalkPoint.magnitude < 1f)
+
+        var distanceToWalkPoint = transform.position - walkPoint;
+        if (distanceToWalkPoint.magnitude < walkPointArrivalDistance)
             walkPointSet = false;
     }
 
     private void SearchWalkPoint()
     {
-        // Calculate random point in range
-        float randomZ = Random.Range(-walkPointRange, walkPointRange);
-        float randomX = Random.Range(-walkPointRange, walkPointRange);
-        
-        walkPoint = new Vector3(transform.position.x + randomX, transform.position.y, transform.position.z + randomZ);
+        var randomX = Random.Range(-walkPointRange, walkPointRange);
+        var randomZ = Random.Range(-walkPointRange, walkPointRange);
 
-        if (Physics.Raycast(walkPoint, -transform.up, 2f, whatIsGround))
+        var candidate = new Vector3(
+            transform.position.x + randomX,
+            transform.position.y,
+            transform.position.z + randomZ
+        );
+
+        if (NavMesh.SamplePosition(candidate, out NavMeshHit hit, navMeshSampleDistance, NavMesh.AllAreas))
         {
+            walkPoint = hit.position;
             walkPointSet = true;
         }
     }
-        
-    private void ChasePlayer()
+
+    // --- Chase / Attack ---
+
+    private void Chase()
     {
-        agent.SetDestination(player.position);
+        if (player != null)
+            agent.SetDestination(player.position);
     }
 
-    private void AttackPlayer()
+    private void Attack()
     {
+        if (player == null) return;
+
         agent.SetDestination(transform.position);
         transform.LookAt(player);
 
-        if (!alreadyAttacked)
+        if (alreadyAttacked) return;
+
+        FireProjectile();
+
+        alreadyAttacked = true;
+        var cooldown = timeBetweenAttacks / Mathf.Max(AttackRateMult, 0.01f);
+        Invoke(nameof(ResetAttack), cooldown);
+    }
+
+    private void FireProjectile()
+    {
+        if (isFakeEnemy) return;
+        if (projectile == null) return;
+
+        var bulletObj = Instantiate(projectile, transform.position, Quaternion.identity);
+        var bullet = bulletObj.GetComponent<Bullet>();
+
+        var finalDamage = attackDamage * DamageMult;
+
+        if (bullet != null)
         {
-            // Attack
-            Rigidbody rb = Instantiate(projectile, transform.position, Quaternion.identity, transform).GetComponent<Rigidbody>();
-            rb.AddForce(transform.forward * 32f, ForceMode.Impulse);
-            rb.AddForce(transform.up * 8f, ForceMode.Impulse);
-            
-            alreadyAttacked = true;
-            Invoke(nameof(ResetAttack), timeBetweenAttacks);
+            var direction = (transform.forward + transform.up * 0.2f).normalized;
+            bullet.Init(direction, finalDamage, gameObject);
+        }
+        else
+        {
+            var rb = bulletObj.GetComponent<Rigidbody>();
+            if (rb != null)
+            {
+                rb.AddForce(transform.forward * (forwardImpulse * DamageMult), ForceMode.Impulse);
+                rb.AddForce(transform.up * upwardImpulse, ForceMode.Impulse);
+            }
         }
     }
 
@@ -106,10 +256,18 @@ public class EnemyAI:MonoBehaviour
     private bool hasntEvent;
     public void TakeDamage(float damage, Vector3 hitPos, Vector3 hitNormal)
     {
-        Instantiate(hitEffect, hitPos, Quaternion.LookRotation(hitNormal));
-        health -= damage;
-        
-        if (health <= 0)
+        if (hitEffect != null)
+            Instantiate(hitEffect, hitPos, Quaternion.LookRotation(hitNormal));
+
+        if (isFakeEnemy)
+        {
+            PopFakeEnemy();
+            return;
+        }
+
+        currentHealth -= damage;
+
+        if (currentHealth <= 0)
         {
             if (!hasntEvent)
             {
@@ -118,7 +276,6 @@ public class EnemyAI:MonoBehaviour
             }
 
             Invoke(nameof(DestroyEnemy), 0.5f);
-            
         }
     }
 
@@ -126,7 +283,18 @@ public class EnemyAI:MonoBehaviour
     {
         Destroy(gameObject);
     }
-    
+
+    private void PopFakeEnemy()
+    {
+        if (fakeDeathPopPrefab != null)
+        {
+            var pop = Instantiate(fakeDeathPopPrefab, transform.position, Quaternion.identity);
+            Destroy(pop, 0.5f);
+        }
+
+        Destroy(gameObject);
+    }
+
     private void OnDrawGizmosSelected()
     {
         Gizmos.color = Color.red;
@@ -134,5 +302,10 @@ public class EnemyAI:MonoBehaviour
         Gizmos.color = Color.yellow;
         Gizmos.DrawWireSphere(transform.position, sightRange);
     }
-    
+
+    [Header("References")]
+    [SerializeField] private NavMeshAgent agent;
+    [SerializeField] private MeshFilter meshFilter;
+    [SerializeField] private MeshRenderer meshRenderer;
+    private Transform player;
 }

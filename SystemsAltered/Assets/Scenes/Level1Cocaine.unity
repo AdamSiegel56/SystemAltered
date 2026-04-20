@@ -167,15 +167,21 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 985cdee070e18704aa59c728ce33597d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::EnemySpawner
-  enemyPrefab: {fileID: 5183033465216785530, guid: 45d93a95a3ab96447aacd7fb3b20cd6a, type: 3}
+  drugState: {fileID: 706645609}
+  realEnemyPrefab: {fileID: 5183033465216785530, guid: 45d93a95a3ab96447aacd7fb3b20cd6a, type: 3}
+  fakeEnemyPrefab: {fileID: 6631295204492346387, guid: 269886c2b8e92ff41a2579a433e6f7ac, type: 3}
   spawnPoints:
   - {fileID: 1790507871}
   - {fileID: 1156253179}
   - {fileID: 1302198368}
   - {fileID: 1876903787}
-  maxEnemies: 10
-  spawnInterval: 6
+  navMeshSampleDistance: 2
+  maxRealEnemies: 8
+  realSpawnInterval: 6
   initialDelay: 2
+  maxFakeEnemies: 6
+  fakeSpawnInterval: 3
+  baseFakeSpawnChance: 1
 --- !u!1 &76305082
 GameObject:
   m_ObjectHideFlags: 0
@@ -10932,6 +10938,14 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 4202172052954646380, guid: d12583abe92da8242aab31f86ed90991, type: 3}
+      propertyPath: drugState
+      value: 
+      objectReference: {fileID: 706645609}
+    - target: {fileID: 7900941654016257922, guid: d12583abe92da8242aab31f86ed90991, type: 3}
+      propertyPath: drugState
+      value: 
+      objectReference: {fileID: 706645609}
     - target: {fileID: 7900941654016257922, guid: d12583abe92da8242aab31f86ed90991, type: 3}
       propertyPath: hudController
       value: 
@@ -24696,7 +24710,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6380810699629905519, guid: 43c74a4bd38aee94eb0ebcde98baef73, type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: -0.000030517578
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 7958979103735403179, guid: 43c74a4bd38aee94eb0ebcde98baef73, type: 3}
       propertyPath: m_AnchoredPosition.x

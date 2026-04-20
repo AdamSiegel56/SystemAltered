@@ -16,21 +16,24 @@ MonoBehaviour:
   duration: 25
   hasCrash: 1
   crashState: {fileID: 11400000, guid: 389a62c704ea653478e3104c980976ed, type: 2}
-  moveSpeed: 8
-  jumpForce: 8
-  gravityScale: 0.5
-  lookSensitivity: 1
-  fov: 55
+  moveSpeedMultiplier: 0.7
+  jumpForceMultiplier: 0.85
+  gravityScaleMultiplier: 0.6
+  lookSensitivityMultiplier: 0.75
+  fov: 70
+  fireRateMultiplier: 0.9
+  recoilMultiplier: 0.8
+  spreadMultiplier: 1.5
   rendererIndex: 3
   spawnFakeEnemies: 0
   fakeEnemyChance: 0
   escalatingHallucinations: 0
   hudCorruptionThreshold: 0.4
   geometryFractureThreshold: 0.7
-  enableBreathingGeometry: 1
+  enableBreathingGeometry: 0
   breathingAmplitude: 0.05
   invertDoorVisuals: 0
-  enableObjectDrift: 1
+  enableObjectDrift: 0
   objectDriftSpeed: 0.2
   jumpVariance: 0.3
   enableRagePull: 0
@@ -38,6 +41,11 @@ MonoBehaviour:
   ragePullForce: 8
   cameraHeightOffset: 0
   tunnelVignetteIntensity: 0
-  fireRate: 10
-  recoil: 1
-  spread: 0.01
+  overrideEnemyAppearance: 1
+  enemyMesh: {fileID: 10208, guid: 0000000000000000e000000000000000, type: 0}
+  enemyMaterial: {fileID: 2100000, guid: 16a106549ec6cb648abf0de2c08f8699, type: 2}
+  enemyScale: {x: 1, y: 1, z: 1}
+  enemySpeedMultiplier: 1
+  enemyDamageMultiplier: 1
+  enemyHealthMultiplier: 1
+  enemyAttackRateMultiplier: 1

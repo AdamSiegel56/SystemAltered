@@ -28,6 +28,7 @@ public class PlayerCharacter : MonoBehaviour, ICharacterController
     [SerializeField] private KinematicCharacterMotor motor;
     [SerializeField] private Transform root;
     [SerializeField] private Transform cameraTarget;
+    [SerializeField] private DrugStateController drugState;
     [Space]
     
     [SerializeField] private float walkSpeed = 20.0f;
@@ -64,7 +65,17 @@ public class PlayerCharacter : MonoBehaviour, ICharacterController
     private bool requestedJump;
     private bool requestedSustainedJump;
     private bool requestedCrouch;
+    private Vector3 externalImpulse;
     private bool canJump;
+    
+    private float MoveSpeedMult =>
+        drugState?.CurrentState?.moveSpeedMultiplier ?? 1f;
+
+    private float JumpForceMult =>
+        drugState?.CurrentState?.jumpForceMultiplier ?? 1f;
+
+    private float GravityScaleMult =>
+        drugState?.CurrentState?.gravityScaleMultiplier ?? 1f;
     
     private Collider[] uncrouchOverlapResults;
     
@@ -98,6 +109,7 @@ public class PlayerCharacter : MonoBehaviour, ICharacterController
     {
         var currentHeight = motor.Capsule.height;
         var normalizedHeight = currentHeight / standHeight;
+        
         var camTargetHeight = currentHeight *
         (
             _stance == Stance.Stand 
@@ -118,6 +130,11 @@ public class PlayerCharacter : MonoBehaviour, ICharacterController
             b: rootTargetScale,
             t: 1f - Mathf.Exp(-crouchHeightResponse * deltaTime)
         );
+    }
+    
+    public void AddExternalImpulse(Vector3 impulse)
+    {
+        externalImpulse += impulse;
     }
     
 
@@ -144,7 +161,7 @@ public class PlayerCharacter : MonoBehaviour, ICharacterController
                 surfaceNormal: motor.GroundingStatus.GroundNormal
             );
             
-            var speed =_stance == Stance.Stand 
+            var baseSpeed =_stance == Stance.Stand 
                 ? walkSpeed 
                 : crouchSpeed;
             
@@ -152,7 +169,7 @@ public class PlayerCharacter : MonoBehaviour, ICharacterController
                 ? walkResponse 
                 : crouchResponse;
         
-            var targetVelocity = groundMovement * speed;
+            var targetVelocity = groundMovement * (baseSpeed * MoveSpeedMult);
             currentVelocity =  Vector3.Lerp
                 (
                     a: currentVelocity, 
@@ -196,7 +213,7 @@ public class PlayerCharacter : MonoBehaviour, ICharacterController
                 effectiveGravity *= jumpSustainGravity;
             }
             
-            currentVelocity += motor.CharacterUp * (effectiveGravity * deltaTime);
+            currentVelocity += motor.CharacterUp * (effectiveGravity * GravityScaleMult * deltaTime);
             
         }
 
@@ -208,9 +225,9 @@ public class PlayerCharacter : MonoBehaviour, ICharacterController
             motor.ForceUnground(0.1f);
             
             var currentVerticalSpeed = Vector3.Dot(currentVelocity, motor.CharacterUp);
-            var targetVerticalSpeed = Mathf.Max(currentVerticalSpeed, jumpSpeed);
+            var targetVerticalSpeed = Mathf.Max(currentVerticalSpeed, jumpSpeed * JumpForceMult);
             
-            currentVelocity += motor.CharacterUp * (targetVerticalSpeed - currentVerticalSpeed);
+            currentVelocity += motor.CharacterUp * (targetVerticalSpeed - currentVerticalSpeed );
         }
     }
 
