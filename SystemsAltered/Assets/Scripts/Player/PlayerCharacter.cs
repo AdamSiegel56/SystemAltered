@@ -64,6 +64,7 @@ public class PlayerCharacter : MonoBehaviour, ICharacterController
     private bool requestedJump;
     private bool requestedSustainedJump;
     private bool requestedCrouch;
+    private bool canJump;
     
     private Collider[] uncrouchOverlapResults;
     
@@ -71,6 +72,7 @@ public class PlayerCharacter : MonoBehaviour, ICharacterController
     {
         _stance = Stance.Stand;
         uncrouchOverlapResults = new Collider[8];
+        canJump = true;
         
         motor.CharacterController = this;
     }
@@ -198,8 +200,9 @@ public class PlayerCharacter : MonoBehaviour, ICharacterController
             
         }
 
-        if (requestedJump)
+        if (requestedJump && canJump)
         {
+            canJump = false;
             requestedJump = false;
 
             motor.ForceUnground(0.1f);
@@ -262,6 +265,9 @@ public class PlayerCharacter : MonoBehaviour, ICharacterController
                 _stance = Stance.Stand;
             }
         }
+        
+        if (motor.GroundingStatus.IsStableOnGround)
+            canJump = true;
         
         
     }
